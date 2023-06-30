@@ -19,10 +19,9 @@ class GaliciaUserDTO(BaseModel):
         else:
             print(user.name + " " + user.cbu)
 
-
-        
+        url = str(request.url_for("get_user_by_cbu", cbu=user.cbu))
         return cls(
             cbu=user.cbu, 
             name=user.name,
-            this=request.url_for("get_user_by_cbu", cbu=user.cbu),
+            this=url,
         )

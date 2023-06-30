@@ -11,7 +11,7 @@ from models.galicia_user import GaliciaUserDB
 class GaliciaUserDao:
     users: Collection
     counter: int = 0
-    base_cbu_block: int = 1000000000000
+    base_cbu_block: int = 1000000000000 #TODO: Siempre inserta con el mismo ID boludon
 
     def __init__(self, db: Database):
         self.users = db.users
@@ -34,7 +34,7 @@ class GaliciaUserDao:
         cbu = "00700016" + str(GaliciaUserDao.base_cbu_block + GaliciaUserDao.counter)
         GaliciaUserDao.counter += 1
         try:
-            new_user = self.users.insert_one(
+            self.users.insert_one(
                 {
                     "cbu":cbu,
                     "name":name,
@@ -45,3 +45,20 @@ class GaliciaUserDao:
             return None
         return self.get_user_by_cbu(cbu)
 
+    def extract_from_account(self, cbu:str, amount:int):
+        user = self.get_user_by_cbu(cbu)
+        self.users.update_one({
+            {"cbu":cbu},
+            {"$set":{
+                "amount": user.amount - amount
+            }}
+        })
+
+    def deposit_to_account(self, cbu:str, amount:int):
+        user = self.get_user_by_cbu(cbu)
+        self.users.update_one({
+            {"cbu":cbu},
+            {"$set":{
+                "amount": user.amount + amount
+            }}
+        })

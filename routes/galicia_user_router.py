@@ -46,3 +46,61 @@ async def create_galicia_user(
                 # "AttributeError: URL has no attribute "encoding"
         },
     )
+
+@router.patch(
+    '/{cbu}/extract',
+    status_code=200,
+    responses={
+        404:{"description":"user doesn't exist"},
+        409:{"description":"Not enough funds"}}
+)
+async def extract_from_account(
+    cbu:str,
+    amount:int,
+    request: Request,
+    galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao),
+):
+    user = galicia_user_dao.get_user_by_cbu(cbu)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User doesn't exist")
+    if user.balance < amount:
+        raise HTTPException(status_code=409, detail="Not enough funds")
+    
+    galicia_user_dao.extract_from_account(user, amount)
+    return Response(
+        status_code=200,
+        headers={
+            "Location": request.url_for(
+                "get_user_by_cbu", cbu=cbu
+            ) #TODO: Acá me está dejando crear sin problema pero me tira un error porque dice
+                # "AttributeError: URL has no attribute "encoding"
+        },
+    )
+
+
+@router.patch(
+    '/{cbu}/deposit',
+    status_code=200,
+    responses={
+        404:{"description":"user doesn't exist"},}
+)
+async def deposit_to_account(
+    cbu:str,
+    amount:int,
+    request: Request,
+    galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao),
+):
+    user = galicia_user_dao.get_user_by_cbu(cbu)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User doesn't exist")
+
+    galicia_user_dao.deposit_to_account(user, amount)
+    return Response(
+        status_code=200,
+        headers={
+            "Location": request.url_for(
+                "get_user_by_cbu", cbu=cbu
+            ) #TODO: Acá me está dejando crear sin problema pero me tira un error porque dice
+                # "AttributeError: URL has no attribute "encoding"
+        },
+    )
