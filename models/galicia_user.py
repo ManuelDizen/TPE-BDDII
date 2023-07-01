@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from fastapi import Request
-
+from models.pydantic_object_id import PydanticObjectId
 
 class GaliciaUserDB(BaseModel):
     cbu:str

@@ -37,13 +37,12 @@ async def create_galicia_user(
     new = galicia_user_dao.create_galicia_user(name)
     if new is None:
         raise HTTPException(status_code=409, detail="User already exists")
+    location = request.url_for("get_user_by_cbu", cbu=new.cbu)
+    location = str(location)
     return Response(
         status_code=201,
         headers={
-            "Location": request.url_for(
-                "get_user_by_cbu", cbu=new.cbu
-            ) #TODO: Acá me está dejando crear sin problema pero me tira un error porque dice
-                # "AttributeError: URL has no attribute "encoding"
+            "Location": location
         },
     )
 
@@ -67,13 +66,12 @@ async def extract_from_account(
         raise HTTPException(status_code=409, detail="Not enough funds")
     
     galicia_user_dao.extract_from_account(user, amount)
+    location = request.url_for("get_user_by_cbu", cbu=cbu)
+    location = str(location)
     return Response(
         status_code=200,
         headers={
-            "Location": request.url_for(
-                "get_user_by_cbu", cbu=cbu
-            ) #TODO: Acá me está dejando crear sin problema pero me tira un error porque dice
-                # "AttributeError: URL has no attribute "encoding"
+            "Location": location
         },
     )
 
@@ -95,12 +93,12 @@ async def deposit_to_account(
         raise HTTPException(status_code=404, detail="User doesn't exist")
 
     galicia_user_dao.deposit_to_account(user, amount)
+    location = request.url_for("get_user_by_cbu", cbu=cbu)
+    location = str(location)
     return Response(
         status_code=200,
         headers={
-            "Location": request.url_for(
-                "get_user_by_cbu", cbu=cbu
-            ) #TODO: Acá me está dejando crear sin problema pero me tira un error porque dice
+            "Location": location #TODO: Acá me está dejando crear sin problema pero me tira un error porque dice
                 # "AttributeError: URL has no attribute "encoding"
         },
     )
