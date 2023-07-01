@@ -62,10 +62,10 @@ async def extract_from_account(
     user = galicia_user_dao.get_user_by_cbu(cbu)
     if user is None:
         raise HTTPException(status_code=404, detail="User doesn't exist")
-    if user.balance < amount:
+    if int(user.balance) < amount:
         raise HTTPException(status_code=409, detail="Not enough funds")
     
-    galicia_user_dao.extract_from_account(user, amount)
+    galicia_user_dao.extract_from_account(cbu, amount)
     location = request.url_for("get_user_by_cbu", cbu=cbu)
     location = str(location)
     return Response(
@@ -92,7 +92,7 @@ async def deposit_to_account(
     if user is None:
         raise HTTPException(status_code=404, detail="User doesn't exist")
 
-    galicia_user_dao.deposit_to_account(user, amount)
+    galicia_user_dao.deposit_to_account(cbu, amount)
     location = request.url_for("get_user_by_cbu", cbu=cbu)
     location = str(location)
     return Response(

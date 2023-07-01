@@ -15,9 +15,11 @@ class GaliciaUserDao:
         self.base_cbu_block = base_cbu_block
 
     def get_user_by_cbu(self, cbu: str):
+        print("Entro a getear")
         user = self.users.find_one(
             {"cbu":cbu}
         )
+        print("Pase el find_one")
         if user is None:
             return None
         return GaliciaUserDB(**user)
@@ -47,22 +49,26 @@ class GaliciaUserDao:
 
     def extract_from_account(self, cbu:str, amount:int):
         user = self.get_user_by_cbu(cbu)
-        self.users.update_one({
-            {"_id":user.id}    ,
+        self.users.update_one(
             {"cbu":cbu},
             {"$set":{
-                "amount": user.amount - amount
+                "balance": int(user.balance) - amount
             }}
-        })
+        )
 
     def deposit_to_account(self, cbu:str, amount:int):
+        print("Entro al get")
+
         user = self.get_user_by_cbu(cbu)
-        self.users.update_one({
+
+        print("No es en el get")
+
+        self.users.update_one(
             {"cbu":cbu},
             {"$set":{
-                "amount": user.amount + amount
+                "balance": int(user.balance) + amount
             }}
-        })
+        )
 
     def get_base_cbu(self):
         return self.base_cbu_block
