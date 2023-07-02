@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from models.galicia_user import GaliciaUserDTO
-from config import get_galicia_user_dao
+from config import get_galicia_user_dao, get_galicia_transfer_dao
 from dao.galicia_user_dao import GaliciaUserDao
+from dao.galicia_transfer_dao import GaliciaTransferDao
 router = APIRouter(prefix="/GAL",)
 
 @router.get(
@@ -98,7 +99,52 @@ async def deposit_to_account(
     return Response(
         status_code=200,
         headers={
-            "Location": location #TODO: Acá me está dejando crear sin problema pero me tira un error porque dice
-                # "AttributeError: URL has no attribute "encoding"
+            "Location": location
         },
+    )
+
+@router.post(
+    '/transfer',
+    status_code=200,
+    responses={
+        404:{"description":"dst_cbu not found in given bank"},
+        404:{"description":"no dst_bank with that code"},
+    }
+)
+async def send_transfer(
+    src_cbu:str,
+    src_bank:str,
+    dst_cbu:str,
+    dst_bank:str,
+    amount:int,
+    request:Request,
+    galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao),
+    galicia_transfer_dao: GaliciaTransferDao = Depends(get_galicia_transfer_dao),
+):
+    # TODO: Voy a armar este método para hacer transferencias internas entre cuentas del galicia
+    # Cuando tenga armada la parte de PIX, ahi me puedo poner a 
+    sending_user = galicia_user_dao.get_user_by_cbu(src_cbu)
+    if sending_user is None:
+        raise HTTPException(status_code=404, detail="src_cbu not found")
+    if sending_user.balance < amount:
+        raise HTTPException(status_code=404, detail="insufficient funds from sender")
+    #TODO: Cambiar el código
+
+    receiving_user = galicia_user_dao.get_user_by_cbu(dst_cbu)
+    if receiving_user is None:
+        raise HTTPException(status_code=404, detail="dst_cbu not found")
+
+    transfer = galicia_transfer_dao.create_transfer(src_cbu, dst_cbu, src_bank, dst_bank, amount)
+    if transfer is None:
+        raise HTTPException(status_code=400, detail="Internal server error")
+    galicia_user_dao.transfer_to_account(transfer.id, src_cbu)
+    galicia_user_dao.receive_transfer(transfer.id, dst_cbu) 
+    #TODO: estas dos líneas de arriba son las que están mal digamos. 
+    #Cuando se maneje desde PIX, no se tendría que usar esta función ni siquiera
+    galicia_user_dao.extract_from_account(src_cbu, amount)
+    galicia_user_dao.deposit_to_account(dst_cbu, amount)
+
+
+    return Response(
+        status_code=200,
     )

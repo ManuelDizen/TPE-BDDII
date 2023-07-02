@@ -4,3 +4,6 @@ mongo = MongoAdmin()
 
 def get_galicia_user_dao():
     return mongo.get_galicia_user_dao()
+
+def get_galicia_transfer_dao():
+    return mongo.get_galicia_transfer_dao()

@@ -1,11 +1,14 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from fastapi import Request
 from models.pydantic_object_id import PydanticObjectId
+from typing import List
+from models.transfer import TransferDB
 
 class GaliciaUserDB(BaseModel):
     cbu:str
-    balance:str
+    balance:int
     name:str
+    transfers: List[PydanticObjectId]
 
 class GaliciaUserDTO(BaseModel):
     cbu:str

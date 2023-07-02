@@ -4,11 +4,13 @@ from pymongo import MongoClient
 from pymongo.database import Database
 
 from dao.galicia_user_dao import GaliciaUserDao
+from dao.galicia_transfer_dao import GaliciaTransferDao
 
 class MongoAdmin:
     client: MongoClient
     db: Database
     galicia_user_dao: GaliciaUserDao
+    galicia_transfer_dao: GaliciaTransferDao
 
     def start_connection(self):
         self.client = MongoClient(getenv("URL"))
@@ -18,6 +20,7 @@ class MongoAdmin:
             cbus = file.read().splitlines()
         cbu_galicia = cbus[0]
         cbu_santander = cbus[1]
+        self.galicia_transfer_dao = GaliciaTransferDao(self.db)
         self.galicia_user_dao = GaliciaUserDao(self.db, int(cbu_galicia))
 
     def close_connection(self):
@@ -31,3 +34,6 @@ class MongoAdmin:
 
     def get_galicia_user_dao(self):
         return self.galicia_user_dao
+    
+    def get_galicia_transfer_dao(self):
+        return self.galicia_transfer_dao
