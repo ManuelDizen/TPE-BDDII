@@ -10,7 +10,7 @@ class PixUserDao:
     
     def create_pix_user(self, cuit, name, mail=None, phone=None):
         check_for_existing = self.find_pix_user_by_cuit(cuit)
-        if check_for_existing is not None:
+        if check_for_existing != -1:
             return -1
 
         query = "INSERT INTO users(cuit, name"

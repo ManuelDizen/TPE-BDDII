@@ -15,6 +15,10 @@ class PostgresAdmin:
                                 password=getenv("PG_PASSWORD"),
                                 port=getenv("PG_PORT"))
         self.cursor = self.connection.cursor()
+        with open("config/table_creation_pix.sql", 'r') as sql_file:
+            # Execute the script
+            self.cursor.execute(sql_file.read())
+            self.connection.commit()
         self.pix_user_dao = PixUserDao(self.connection, self.cursor)
         print("Postgres connection started.")
     

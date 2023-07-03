@@ -6,6 +6,32 @@ from dao.pix_user_dao import PixUserDao
 router = APIRouter(prefix="/PIX",)
 
 @router.post(
+    'create_user',
+    status_code=201,
+    responses={
+        500: {"description":"Internal error, try again later"},   
+    }
+)
+async def create_user(
+    cuit: str, 
+    name: str, 
+    email: str = None,
+    phone: str = None,
+    pix_user_dao: PixUserDao = Depends(get_pix_user_dao)
+):
+    check = pix_user_dao.create_pix_user(cuit, name, email, phone)
+    if check == -1:
+        raise HTTPException(500, "Internal error, try again later")
+    else:
+        return Response(
+        status_code=201,
+    )
+
+
+
+
+
+@router.post(
     '/transfer',
     status_code=200,
     responses={
