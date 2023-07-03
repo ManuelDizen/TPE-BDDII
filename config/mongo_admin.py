@@ -17,7 +17,7 @@ class MongoAdmin:
     santander_transfer_dao: SantanderTransferDao
 
     def start_connection(self):
-        self.client = MongoClient(getenv("URL"))
+        self.client = MongoClient(getenv("MONGO_URL"))
         self.db = self.client["tpebddII"]
 
         with open('config/cbus.txt', 'r') as file:
