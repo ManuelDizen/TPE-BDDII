@@ -1,40 +1,40 @@
 from pymongo.database import Database
 from pymongo.collection import Collection
 from pymongo.errors import DuplicateKeyError
-from models.galicia_user import GaliciaUserDB
+from models.santander_user import SantanderUserDB
 from models.pydantic_object_id import PydanticObjectId
-# Para CBU, numero de banco: 007. Numero de sucursal: 0001
-# "Dicho patrón es 7139713 para el primer bloque, y 3971397139713 para el segundo bloque. "
 
-class GaliciaUserDao:
-    galicia_users: Collection
+# Para CBU, numero de banco: 072. Numero de sucursal: 0001
+
+class SantanderUserDao:
+    santander_users: Collection
     base_cbu_block: int
 
     def __init__(self, db: Database, base_cbu_block: int):
-        self.galicia_users = db.galicia_users
+        self.santander_users = db.santander_users
         self.base_cbu_block = base_cbu_block
 
     def get_user_by_cbu(self, cbu: str):
-        user = self.galicia_users.find_one(
+        user = self.santander_users.find_one(
             {"cbu":cbu}
         )
         if user is None:
             return None
-        return GaliciaUserDB(**user)
+        return SantanderUserDB(**user)
     
     def get_user_by_name(self, name:str):
-        user = self.galicia_users.find_one({"name":name})
+        user = self.santander_users.find_one({"name":name})
         if user is None:
             return None
-        return GaliciaUserDB(**user)
+        return SantanderUserDB(**user)
 
     def create_galicia_user(self, name:str):
         if self.get_user_by_name(name) is not None:
             return None
-        cbu = "00700016" + str(self.base_cbu_block)
+        cbu = "07200016" + str(self.base_cbu_block)
         self.base_cbu_block += 1
         try:
-            self.galicia_users.insert_one(
+            self.santander_users.insert_one(
                 {
                     "cbu":cbu,
                     "name":name,
@@ -48,7 +48,7 @@ class GaliciaUserDao:
 
     def extract_from_account(self, cbu:str, amount:int):
         user = self.get_user_by_cbu(cbu)
-        self.galicia_users.update_one(
+        self.santander_users.update_one(
             {"cbu":cbu},
             {"$set":{
                 "balance": int(user.balance) - amount
@@ -56,13 +56,8 @@ class GaliciaUserDao:
         )
 
     def deposit_to_account(self, cbu:str, amount:int):
-        print("Entro al get")
-
         user = self.get_user_by_cbu(cbu)
-
-        print("No es en el get")
-
-        self.galicia_users.update_one(
+        self.santander_users.update_one(
             {"cbu":cbu},
             {"$set":{
                 "balance": int(user.balance) + amount
@@ -80,7 +75,7 @@ class GaliciaUserDao:
             return None
         if transfer_id is None:
             return None
-        self.galicia_users.update_one(
+        self.santander_users.update_one(
             {"cbu":sending_user.cbu},
             {"$push": {"transfers" : transfer_id}},
         )
@@ -89,10 +84,9 @@ class GaliciaUserDao:
         receiving_user = self.get_user_by_cbu(dst_cbu)
         if receiving_user is None:
             return None
-        # transfer = self.transfer_dao.create_transfer(src_cbu, dst_cbu, src_bank, "GAL", amount) # Se hardcodea GAL acá porque es el qu emaneja la base de galicia
         if transfer_id is None:
             return None
-        self.galicia_users.update_one(
+        self.santander_users.update_one(
             {"cbu":dst_cbu},
             {"$push":{"transfers":transfer_id},}
         )

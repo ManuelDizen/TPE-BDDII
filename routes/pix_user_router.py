@@ -18,11 +18,7 @@ async def get_user_by_cuit(
     pix_user_dao:PixUserDao = Depends(get_pix_user_dao)
 ):
     user = pix_user_dao.get_from_cuit(cuit)
-    print(user)
     return PixUserDTO(user[1], user[2], user[3], user[4])
-    return Response(
-        status_code=200,
-    ) 
 
 @router.post(
     '/user',
@@ -43,7 +39,7 @@ async def create_user(
         raise HTTPException(500, "Internal error, try again later")
     else:
         return Response(
-        status_code=201,
+        status_code=201, #TODO: Location
     )
 
 @router.post(
@@ -66,7 +62,7 @@ async def add_bank_account_to_user(
     if result == -1:
         raise HTTPException(400, "User side error")
     return Response(
-        status_code=201 #TODO: Agregar donde está (ver dao de galicia)
+        status_code=201 #TODO: Location
     )
 
 
@@ -125,7 +121,7 @@ async def send_transfer(
     pix_user_dao.add_to_account(dst_bank, dst_cbu, amount)
 
     return Response(
-        status_code=200,
+        status_code=200, #TODO: Algo de info? Medio plain así ajja
     )
 
 
