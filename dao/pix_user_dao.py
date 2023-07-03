@@ -1,11 +1,13 @@
-from config.postgres_admin import PostgresAdmin
+import psycopg2
 from config import get_galicia_user_dao, get_galicia_transfer_dao
 from models.pix_banks import PixBanks
 class PixUserDao:
-    pg_admin: PostgresAdmin
+    connection = None
+    cursor = None
 
-    def __init__(self, pg_admin):
-        self.pg_admin = pg_admin
+    def __init__(self, connection, cursor):
+        self.connection = connection
+        self.cursor = cursor
     
     def create_pix_user(self, cuit, name, mail=None, phone=None):
         check_for_existing = self.find_pix_user_by_cuit(cuit)
@@ -26,13 +28,13 @@ class PixUserDao:
             query += ", %s"
             params += (phone,)
         query += ")"
-        check = self.pg_admin.query(query, params)
+        check = self.query(query, params)
         return check
 
     def find_pix_user_by_cuit(self, cuit: str):
         query = "SELECT FROM users WHERE cuit = %s"
         params = (cuit,)
-        result = self.pg_admin.select_query(query, params)
+        result = self.select_query(query, params)
         if result == None or len(result) == 0:
             return -1
         return result[0]
@@ -40,7 +42,7 @@ class PixUserDao:
     def add_bank_to_user_account(self, user_id:int, bank_id:int):
         query = "INSERT INTO user_to_banks(user_id, bank_id) VALUES(%d, %d)"
         params = (user_id, bank_id)
-        check = self.pg_admin.query(query, params)
+        check = self.query(query, params)
         return check
     
     def create_pix_bank_account(self, user_id:int, bank_id:int, cbu:str):
@@ -57,12 +59,12 @@ class PixUserDao:
         # Chequee que existe esa cuenta en el banco
         query = "INSERT INTO bank_accounts(balance, bank_id, cbu) VALUES(%d, %d, %s)"
         params = (0, bank_id, cbu)
-        result = self.pg_admin.query(query, params)
+        result = self.query(query, params)
         if result is -1:
             return -1
         result = self.add_bank_to_user_account(user_id, bank_id)
         if result is -1:
-            # self.pg_admin.remove_query(remover tupla insertada antes)
+            # self.remove_query(remover tupla insertada antes)
             return -1
         return 0
     
@@ -144,3 +146,19 @@ class PixUserDao:
         elif bank_id == 2:
             return None
             # return get_frances_user_dao()
+
+    def select_query(self, query, params=None):
+        try:
+            self.cursor.execute(query, params)
+            result = self.cursor.fetchall()
+            return result
+        except psycopg2.Error as e:
+            return None
+        
+    def query(self, query, params=None):
+        try:
+            self.cursor.execute(query, params)
+            self.connection.commit()
+            return 0
+        except psycopg2.Error as e:
+            return -1
