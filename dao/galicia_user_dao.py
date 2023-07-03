@@ -28,7 +28,7 @@ class GaliciaUserDao:
             return None
         return GaliciaUserDB(**user)
 
-    def create_galicia_user(self, name:str):
+    def create_user(self, name:str):
         if self.get_user_by_name(name) is not None:
             return None
         cbu = "00700016" + str(self.base_cbu_block)

@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from models.galicia_user import GaliciaUserDTO
-from config import get_galicia_user_dao, get_galicia_transfer_dao
-from dao.galicia_user_dao import GaliciaUserDao
-from dao.galicia_transfer_dao import GaliciaTransferDao
+from models.santander_user import SantanderUserDTO
+from config import get_santander_transfer_dao, get_santander_user_dao
+from dao.santander_user_dao import SantanderUserDao
+from dao.santander_transfer_dao import SantanderTransferDao
 
-router = APIRouter(prefix="/GAL",)
+router = APIRouter(prefix="/STD",)
 
 @router.get(
     "/{cbu}",
-    response_model = GaliciaUserDTO,
+    response_model = SantanderUserDTO,
     responses={
         404: {"description": "User not found"},
         403: {"description": "Forbidden operation"},
@@ -17,14 +17,14 @@ router = APIRouter(prefix="/GAL",)
 async def get_user_by_cbu(
     cbu:str,
     request:Request,
-    galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao),
+    santander_user_dao: SantanderUserDao = Depends(get_santander_user_dao),
 ):
-    user = galicia_user_dao.get_user_by_cbu(cbu)
+    user = santander_user_dao.get_user_by_cbu(cbu)
     
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     
-    return GaliciaUserDTO.from_user(user=user, request=request)
+    return SantanderUserDTO.from_user(user=user, request=request)
 
 @router.post(
     "/account", 
@@ -34,9 +34,9 @@ async def get_user_by_cbu(
 async def create_user(
     name:str,
     request: Request,
-    galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao),
+    santander_user_dao: SantanderUserDao = Depends(get_santander_user_dao),
 ):
-    new = galicia_user_dao.create_user(name)
+    new = santander_user_dao.create_user(name)
     if new is None:
         raise HTTPException(status_code=409, detail="User already exists")
     location = request.url_for("get_user_by_cbu", cbu=new.cbu)
@@ -59,15 +59,15 @@ async def extract_from_account(
     cbu:str,
     amount:int,
     request: Request,
-    galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao),
+    santander_user_dao: SantanderUserDao = Depends(get_santander_user_dao),
 ):
-    user = galicia_user_dao.get_user_by_cbu(cbu)
+    user = santander_user_dao.get_user_by_cbu(cbu)
     if user is None:
         raise HTTPException(status_code=404, detail="User doesn't exist")
     if int(user.balance) < amount:
         raise HTTPException(status_code=409, detail="Not enough funds")
     
-    galicia_user_dao.extract_from_account(cbu, amount)
+    santander_user_dao.extract_from_account(cbu, amount)
     location = request.url_for("get_user_by_cbu", cbu=cbu)
     location = str(location)
     return Response(
@@ -88,13 +88,13 @@ async def deposit_to_account(
     cbu:str,
     amount:int,
     request: Request,
-    galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao),
+    santander_user_dao: SantanderUserDao = Depends(get_santander_user_dao),
 ):
-    user = galicia_user_dao.get_user_by_cbu(cbu)
+    user = santander_user_dao.get_user_by_cbu(cbu)
     if user is None:
         raise HTTPException(status_code=404, detail="User doesn't exist")
 
-    galicia_user_dao.deposit_to_account(cbu, amount)
+    santander_user_dao.deposit_to_account(cbu, amount)
     location = request.url_for("get_user_by_cbu", cbu=cbu)
     location = str(location)
     return Response(
@@ -112,38 +112,38 @@ async def deposit_to_account(
         404:{"description":"no dst_bank with that code"},
     }
 )
-async def send_transfer_internal_gal(
+async def send_transfer_internal_std(
     src_cbu:str,
     src_bank:str,
     dst_cbu:str,
     dst_bank:str,
     amount:int,
     request:Request,
-    galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao),
-    galicia_transfer_dao: GaliciaTransferDao = Depends(get_galicia_transfer_dao),
+    santander_user_dao: SantanderUserDao = Depends(get_santander_user_dao),
+    santander_transfer_dao: SantanderTransferDao = Depends(get_santander_transfer_dao)
 ):
     # TODO: Voy a armar este método para hacer transferencias internas entre cuentas del galicia
     # Cuando tenga armada la parte de PIX, ahi me puedo poner a 
-    sending_user = galicia_user_dao.get_user_by_cbu(src_cbu)
+    sending_user = santander_user_dao.get_user_by_cbu(src_cbu)
     if sending_user is None:
         raise HTTPException(status_code=404, detail="src_cbu not found")
     if sending_user.balance < amount:
         raise HTTPException(status_code=404, detail="insufficient funds from sender")
     #TODO: Cambiar el código
 
-    receiving_user = galicia_user_dao.get_user_by_cbu(dst_cbu)
+    receiving_user = santander_user_dao.get_user_by_cbu(dst_cbu)
     if receiving_user is None:
         raise HTTPException(status_code=404, detail="dst_cbu not found")
 
-    transfer = galicia_transfer_dao.create_transfer(src_cbu, dst_cbu, src_bank, dst_bank, amount)
+    transfer = santander_transfer_dao.create_transfer(src_cbu, dst_cbu, src_bank, dst_bank, amount)
     if transfer is None:
         raise HTTPException(status_code=400, detail="Internal server error")
-    galicia_user_dao.transfer_to_account(transfer.id, src_cbu)
-    galicia_user_dao.receive_transfer(transfer.id, dst_cbu) 
+    santander_user_dao.transfer_to_account(transfer.id, src_cbu)
+    santander_user_dao.receive_transfer(transfer.id, dst_cbu) 
     #TODO: estas dos líneas de arriba son las que están mal digamos. 
     #Cuando se maneje desde PIX, no se tendría que usar esta función ni siquiera
-    galicia_user_dao.extract_from_account(src_cbu, amount)
-    galicia_user_dao.deposit_to_account(dst_cbu, amount)
+    santander_user_dao.extract_from_account(src_cbu, amount)
+    santander_user_dao.deposit_to_account(dst_cbu, amount)
 
 
     return Response(

@@ -28,7 +28,7 @@ class SantanderUserDao:
             return None
         return SantanderUserDB(**user)
 
-    def create_galicia_user(self, name:str):
+    def create_user(self, name:str):
         if self.get_user_by_name(name) is not None:
             return None
         cbu = "07200016" + str(self.base_cbu_block)

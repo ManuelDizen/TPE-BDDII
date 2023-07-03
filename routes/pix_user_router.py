@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from config import get_galicia_transfer_dao, get_galicia_user_dao, get_pix_user_dao
-from models.pix_banks import PixBanks
+from config import get_galicia_transfer_dao, get_galicia_user_dao, get_pix_user_dao, get_santander_user_dao, get_santander_transfer_dao
 from dao.pix_user_dao import PixUserDao
 from models.pix_user import PixUserDTO
 
@@ -130,7 +129,7 @@ def get_transfer_dao_for_bank_id(bank_id:int):
         return get_galicia_transfer_dao()
     elif bank_id == 1:
         # STD (TODO: Change for new daos when created)
-        return None
+        return get_santander_transfer_dao()
         # return get_santander_user_dao()
     elif bank_id == 2:
         return None
@@ -141,7 +140,7 @@ def get_user_dao_for_bank_id(bank_id:int):
         return get_galicia_user_dao()
     elif bank_id == 1:
         # STD (TODO: Change for new daos when created)
-        return None
+        return get_santander_user_dao()
         # return get_santander_user_dao()
     elif bank_id == 2:
         return None
