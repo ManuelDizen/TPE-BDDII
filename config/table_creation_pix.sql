@@ -25,3 +25,7 @@ create table if not exists user_to_banks(
     bank_id int not null,
     unique(user_id, bank_id)
 );
+
+INSERT INTO banks(id, code) SELECT 0, 'GAL' WHERE NOT EXISTS (SELECT 1 FROM banks WHERE id = 0);
+INSERT INTO banks(id, code) SELECT 1, 'STD' WHERE NOT EXISTS (SELECT 1 FROM banks WHERE id = 1);
+INSERT INTO banks(id, code) SELECT 2, 'FRA' WHERE NOT EXISTS (SELECT 1 FROM banks WHERE id = 2);

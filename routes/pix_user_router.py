@@ -6,7 +6,7 @@ from dao.pix_user_dao import PixUserDao
 router = APIRouter(prefix="/PIX",)
 
 @router.post(
-    'create_user',
+    '/create_user',
     status_code=201,
     responses={
         500: {"description":"Internal error, try again later"},   
@@ -27,7 +27,28 @@ async def create_user(
         status_code=201,
     )
 
-
+@router.post(
+    '/{cbu}/bank_account',
+    status_code = 201,
+    responses={
+        404:{"description":"user not found in pix"},
+        404:{"description":"Bank code is invalid"}
+    }
+)
+async def add_bank_account_to_user(
+    user_cuit:str,
+    cbu:str, 
+    bank_code:str,
+    pix_user_dao: PixUserDao = Depends(get_pix_user_dao)
+):
+    result = pix_user_dao.create_pix_bank_account(user_cuit, 
+                                                  get_id_from_name(bank_code), 
+                                                  cbu)
+    if result == -1:
+        raise HTTPException(400, "User side error")
+    return Response(
+        status_code=201 #TODO: Agregar donde está (ver dao de galicia)
+    )
 
 
 
