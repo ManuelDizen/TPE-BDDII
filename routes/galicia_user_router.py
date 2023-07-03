@@ -27,7 +27,7 @@ async def get_user_by_cbu(
     return GaliciaUserDTO.from_user(user=user, request=request)
 
 @router.post(
-    "/", 
+    "/account", 
     status_code=201,
     responses={409: {"description": "User already exists"}},
 )

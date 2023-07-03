@@ -17,11 +17,6 @@ class GaliciaUserDTO(BaseModel):
 
     @classmethod
     def from_user(cls, user: GaliciaUserDB, request: Request):
-        if user is None:
-            print("USER ES NONE")
-        else:
-            print(user.name + " " + user.cbu)
-
         url = str(request.url_for("get_user_by_cbu", cbu=user.cbu))
         return cls(
             cbu=user.cbu, 

@@ -2,11 +2,30 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from config import get_galicia_transfer_dao, get_galicia_user_dao, get_pix_user_dao
 from models.pix_banks import PixBanks
 from dao.pix_user_dao import PixUserDao
+from models.pix_user import PixUserDTO
 
 router = APIRouter(prefix="/PIX",)
 
+@router.get(
+    '/user',
+    status_code=200,
+    responses={
+        404: {"description":"user not found"},
+    }
+)
+async def get_user_by_cuit(
+    cuit:str,
+    pix_user_dao:PixUserDao = Depends(get_pix_user_dao)
+):
+    user = pix_user_dao.get_from_cuit(cuit)
+    print(user)
+    return PixUserDTO(user[1], user[2], user[3], user[4])
+    return Response(
+        status_code=200,
+    ) 
+
 @router.post(
-    '/create_user',
+    '/user',
     status_code=201,
     responses={
         500: {"description":"Internal error, try again later"},   

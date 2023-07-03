@@ -7,6 +7,14 @@ class PixUserDao:
     def __init__(self, connection, cursor):
         self.connection = connection
         self.cursor = cursor
+
+    def get_from_cuit(self, cuit:str):
+        query = "SELECT * FROM users WHERE cuit = %s"
+        params = (cuit,)
+        result = self.select_query(query,params)
+        if result is None or len(result) == 0:
+            return -1
+        return result[0]
     
     def create_pix_user(self, cuit, name, mail=None, phone=None):
         check_for_existing = self.find_pix_user_by_cuit(cuit)
