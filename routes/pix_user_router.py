@@ -1,4 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from config import get_galicia_transfer_dao, get_galicia_user_dao, get_pix_user_dao
+from models.pix_banks import PixBanks
+from dao.pix_user_dao import PixUserDao
 
 router = APIRouter(prefix="/PIX",)
 
@@ -17,6 +20,87 @@ async def send_transfer(
     dst_bank:str,
     amount:int,
     request:Request,
+    pix_user_dao: PixUserDao = Depends(get_pix_user_dao)
 ):
+    bank_id = get_id_from_name(src_bank)
+    if bank_id == -1:
+        raise HTTPException(404, "Bank not found")
+    dao = get_user_dao_for_bank_id(bank_id)
+    sender = dao.get_user_by_cbu(src_cbu)
+    if sender is None or sender.balance < amount:
+        raise HTTPException(404, "Bank not found")
     
-    return 0
+    rcv_bank_id = get_id_from_name(dst_bank)
+    if rcv_bank_id == -1:
+        raise HTTPException(404, "Bank not found")
+    rcv_dao = get_user_dao_for_bank_id(rcv_bank_id)
+    receiver = rcv_dao.get_user_by_cbu(dst_cbu)
+    if receiver is None:
+        raise HTTPException(404, "Bank not found") #TODO: Corregir estas excepciones
+    
+    t_dao = get_transfer_dao_for_bank_id(bank_id)
+    transfer = t_dao.create_transfer(src_cbu, dst_cbu, 
+                                        get_name_from_id(bank_id),
+                                        get_name_from_id(rcv_bank_id),
+                                        amount)
+    dao.transfer_to_account(transfer.id, src_cbu)
+    dao.extract_from_account(src_cbu, amount)
+
+    t_dao = get_transfer_dao_for_bank_id(rcv_bank_id)
+    transfer = t_dao.create_transfer(src_cbu, dst_cbu, 
+                                        get_name_from_id(bank_id),
+                                        get_name_from_id(rcv_bank_id),
+                                        amount)
+    # Nota: Lo creo dos veces porque no puedo utilizar el mismo ID para ambas cosas
+    rcv_dao.receive_transfer(transfer.id, dst_cbu)
+    rcv_dao.deposit_to_account(dst_cbu, amount)
+
+    pix_user_dao.extract_from_account(src_bank, src_cbu, amount)
+    pix_user_dao.add_to_account(dst_bank, dst_cbu, amount)
+
+    return Response(
+        status_code=200,
+    )
+
+
+def get_transfer_dao_for_bank_id(bank_id:int):
+    if bank_id == 0: 
+        return get_galicia_transfer_dao()
+    elif bank_id == 1:
+        # STD (TODO: Change for new daos when created)
+        return None
+        # return get_santander_user_dao()
+    elif bank_id == 2:
+        return None
+        # return get_frances_user_dao()
+
+def get_user_dao_for_bank_id(bank_id:int):
+    if bank_id == 0: 
+        return get_galicia_user_dao()
+    elif bank_id == 1:
+        # STD (TODO: Change for new daos when created)
+        return None
+        # return get_santander_user_dao()
+    elif bank_id == 2:
+        return None
+        # return get_frances_user_dao()
+
+def get_name_from_id(id:int):
+    if id == 0:
+        return "GAL"
+    elif id == 1:
+        return "STD"
+    elif id == 2:
+        return "FRA"
+    else:
+        return -1
+    
+def get_id_from_name(name:str):
+        if name == "GAL":
+            return 0
+        elif name == "STD":
+            return 1
+        elif name == "FRA":
+            return 2
+        else:
+            return -1

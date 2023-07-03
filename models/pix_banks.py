@@ -5,7 +5,7 @@ class PixBanks(Enum):
     STD = 1
     FRA = 2
 
-    def get_id_from_name(self, name):
+    def get_id_from_name(self, name:str):
         if name == "GAL":
             return 0
         elif name == "STD":
@@ -15,7 +15,7 @@ class PixBanks(Enum):
         else:
             return -1
         
-    def get_name_from_id(self, id):
+    def get_name_from_id(self, id:int):
         if id == 0:
             return "GAL"
         elif id == 1:

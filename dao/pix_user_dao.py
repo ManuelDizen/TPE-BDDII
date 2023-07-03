@@ -1,5 +1,4 @@
 import psycopg2
-from config import get_galicia_user_dao, get_galicia_transfer_dao
 from models.pix_banks import PixBanks
 class PixUserDao:
     connection = None
@@ -40,24 +39,14 @@ class PixUserDao:
         return result[0]
 
     def add_bank_to_user_account(self, user_id:int, bank_id:int):
-        query = "INSERT INTO user_to_banks(user_id, bank_id) VALUES(%d, %d)"
+        query = "INSERT INTO user_to_banks(user_id, bank_id) VALUES(%s, %s)"
         params = (user_id, bank_id)
         check = self.query(query, params)
         return check
     
-    def create_pix_bank_account(self, user_id:int, bank_id:int, cbu:str):
-        if bank_id == 0: 
-            result = get_galicia_user_dao().get_user_by_cbu(cbu)
-        elif bank_id == 1:
-            # STD (TODO: Change for new daos when created)
-            result = get_galicia_user_dao().get_user_by_cbu(cbu)
-        elif bank_id == 2:
-            result = get_galicia_user_dao().get_user_by_cbu(cbu)
-        if result is None:
-            return -1
-    
+    def create_pix_bank_account(self, user_id:int, bank_id:int, cbu:str):    
         # Chequee que existe esa cuenta en el banco
-        query = "INSERT INTO bank_accounts(balance, bank_id, cbu) VALUES(%d, %d, %s)"
+        query = "INSERT INTO bank_accounts(balance, bank_id, cbu) VALUES(%s, %s, %s)"
         params = (0, bank_id, cbu)
         result = self.query(query, params)
         if result is -1:
@@ -68,14 +57,34 @@ class PixUserDao:
             return -1
         return 0
     
-    def extract_from_account(self, bank_id:int, cbu:str):
-        dao = self.get_user_dao_for_bank_id()
-        if dao is None or dao.get_user_by_cbu(cbu) is None:
+    def extract_from_account(self, bank_id:int, cbu:str, amount:int):
+        query = "SELECT * FROM bank_accounts WHERE bank_id = %s AND cbu = %s"
+        params = (bank_id, cbu)
+        user = self.select_query(query, params)
+        if user is None or len(user) == 0:
             return -1
-        result = dao.extract_from_account(cbu)
-        if result is None:
+        user_balance = user[1] # id, balance, bank_id, cbu
+        print(user)
+        print(user_balance)
+
+        query = "UPDATE bank_accounts SET balance = %s WHERE bank_id = %s AND cbu = %s"
+        params = (int(user_balance) - amount, bank_id, cbu)
+        self.query(query, params)
+        return 0
+    
+    def add_to_account(self, bank_id:int, cbu:str, amount:int):
+        query = "SELECT * FROM bank_accounts WHERE bank_id = %s AND cbu = %s"
+        params = (bank_id, cbu)
+        user = self.select_query(query, params)
+        if user is None or len(user) == 0:
             return -1
-        
+        user_balance = user[1] # id, balance, bank_id, cbu
+        print(user)
+        print(user_balance)
+
+        query = "UPDATE bank_accounts SET balance = %s WHERE bank_id = %s AND cbu = %s"
+        params = (int(user_balance) + amount, bank_id, cbu)
+        self.query(query, params)
         return 0
     
     def make_transaction(self, 
@@ -124,28 +133,6 @@ class PixUserDao:
         rcv_dao.deposit_to_account(dst_cbu, amount)
 
         # CREO QUE ESTO DEBERÍA FUNCIONAR
-
-    def get_transfer_dao_for_bank_id(self, bank_id:int):
-        if bank_id == 0: 
-            return get_galicia_transfer_dao()
-        elif bank_id == 1:
-            # STD (TODO: Change for new daos when created)
-            return None
-            # return get_santander_user_dao()
-        elif bank_id == 2:
-            return None
-            # return get_frances_user_dao()
-
-    def get_user_dao_for_bank_id(self, bank_id:int):
-        if bank_id == 0: 
-            return get_galicia_user_dao()
-        elif bank_id == 1:
-            # STD (TODO: Change for new daos when created)
-            return None
-            # return get_santander_user_dao()
-        elif bank_id == 2:
-            return None
-            # return get_frances_user_dao()
 
     def select_query(self, query, params=None):
         try:
