@@ -14,8 +14,8 @@ create table if not exists bank_accounts(
 create table if not exists users(
     id serial primary key,
     cuit varchar not null,
+    name varchar not null,
     email varchar,
-    name varchar,
     phone varchar
 );
 
