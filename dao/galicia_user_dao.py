@@ -81,12 +81,8 @@ class GaliciaUserDao:
         sending_user = self.get_user_by_cbu(src_cbu)
         if sending_user is None:
             return None
-        # transfer = self.transfer_dao.create_transfer(src_cbu, dst_cbu, "GAL", dst_bank, amount) # Se hardcodea GAL acá porque es el qu emaneja la base de galicia
         if transfer_id is None:
             return None
-        print(type(transfer_id))
-        print(type(sending_user.transfers))
-        print(transfer_id)
         self.galicia_users.update_one(
             {"cbu":sending_user.cbu},
             {"$push": {"transfers" : transfer_id}},

@@ -3,6 +3,7 @@ from models.galicia_user import GaliciaUserDTO
 from config import get_galicia_user_dao, get_galicia_transfer_dao
 from dao.galicia_user_dao import GaliciaUserDao
 from dao.galicia_transfer_dao import GaliciaTransferDao
+
 router = APIRouter(prefix="/GAL",)
 
 @router.get(

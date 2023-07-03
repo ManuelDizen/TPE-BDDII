@@ -22,10 +22,17 @@ class PostgresAdmin:
         print("Postgres connection ended")
 
     def select_query(self, query, params=None):
-        self.cursor.execute(query, params)
-        result = self.cursor.fetchall()
-        return result
-    
-    def insert_query(self, query, params=None):
-        self.cursor.execute(query, params)
-        self.connection.commit()
+        try:
+            self.cursor.execute(query, params)
+            result = self.cursor.fetchall()
+            return result
+        except psycopg2.Error as e:
+            return None
+        
+    def query(self, query, params=None):
+        try:
+            self.cursor.execute(query, params)
+            self.connection.commit()
+            return 0
+        except psycopg2.Error as e:
+            return -1

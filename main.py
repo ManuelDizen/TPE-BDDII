@@ -3,7 +3,7 @@ from os import getenv
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from routes import galicia_user_router
+from routes import galicia_user_router, pix_user_router
 
 from config import mongo, postgres
 
@@ -11,7 +11,7 @@ load_dotenv()
 
 app = FastAPI()
 app.include_router(galicia_user_router.router)
-
+app.include_router(pix_user_router.router)
 #
 # Incluir los routers
 #
