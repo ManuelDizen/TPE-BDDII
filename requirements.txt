@@ -1,6 +1,8 @@
+couchdb2==1.13.0
 fastapi==0.99.1
 psycopg2_binary==2.9.6
 pydantic==1.10.10
 pymongo==4.4.0
 python-dotenv==1.0.0
+Requests==2.31.0
 uvicorn==0.22.0
