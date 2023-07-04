@@ -25,6 +25,27 @@ async def create_user(
     )
 
 @router.get(
+    '/testendpoint',
+    status_code=200,
+    responses={
+        404:{"description":"user doesn't exist"},
+        409:{"description":"Not enough funds"}}
+)
+async def test(
+    cbu:str,
+    transfer_id:str,
+    frances_user_dao: FrancesUserDao = Depends(get_frances_user_dao)
+):
+    print("Entro al endpoint que quiero")
+    user = frances_user_dao.get_user_by_cbu(cbu)
+    if user is not None:
+        print("El user lo encuentra")
+    frances_user_dao.transfer_to_account(transfer_id, cbu)
+
+
+    return Response(status_code=200)
+
+@router.get(
     "/{cbu}",
     status_code=200,
     responses={
@@ -35,6 +56,8 @@ async def get_user_by_cbu(
     cbu:str, 
     frances_user_dao: FrancesUserDao = Depends(get_frances_user_dao)
 ):
+    print("Estoy entrando al endpoint del get")
+    print(cbu)
     user = frances_user_dao.get_user_by_cbu(cbu)
     if user is None:
         raise HTTPException(404, "not found")

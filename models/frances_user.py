@@ -7,22 +7,28 @@ class FrancesUserDB:
     balance:int
     name:str
     transfers: List[PydanticObjectId]
+    rev :str
 
-    def __init__(self, id:str, name:str, cbu:str,balance:int, transfers:List):
+    def __init__(self, id:str, name:str, cbu:str,balance:int, transfers:List,rev:str):
         self.id = id
         self.name = name
         self.cbu = cbu
         self.balance = balance
         self.transfers = transfers
+        self.rev = rev
 
     @classmethod
     def from_json(cls, json:any):
+
+        print(json["transfers"])        
+
         return cls(
             id = json["_id"],
             name=json["name"],
             cbu=json["cbu"],
             balance=json["balance"],
-            transfers=json["transfers"]
+            transfers=json["transfers"],
+            rev=json["_rev"]
         )
 
 class FrancesUserDTO:

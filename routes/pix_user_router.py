@@ -115,8 +115,8 @@ async def send_transfer(
                                         get_name_from_id(rcv_bank_id),
                                         amount)
     # Nota: Lo creo dos veces porque no puedo utilizar el mismo ID para ambas cosas
-    rcv_dao.receive_transfer(transfer.id, dst_cbu)
-    rcv_dao.deposit_to_account(dst_cbu, amount)
+    rcv_dao.receive_transfer(transfer.id, dst_cbu) #Persiste en cuenta banco el id de la transaccion
+    rcv_dao.deposit_to_account(dst_cbu, amount) # Aumenta balance de cuenta
 
     pix_user_dao.extract_from_account(src_bank, src_cbu, amount)
     pix_user_dao.add_to_account(dst_bank, dst_cbu, amount)

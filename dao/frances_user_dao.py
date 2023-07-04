@@ -4,6 +4,8 @@ from os import getenv
 import requests
 import json
 from models.frances_user import FrancesUserDTO, FrancesUserDB
+from models.pydantic_object_id import PydanticObjectId
+
 # Codigo de banco 017
 
 class FrancesUserDao:
@@ -45,24 +47,24 @@ class FrancesUserDao:
     
     def extract_from_account(self, cbu:str, amount:int):
         user = self.get_user_by_cbu(cbu)
-        if "cbu" not in user["docs"][0]:
+        if user is None:
             return 404
-        print(user["docs"][0])
-        current_balance = user["docs"][0]["balance"]
+        current_balance = user.balance
 
         if current_balance < amount:
             return 400 #Not enough funds
         
         new_balance = current_balance - amount
         body = {
-            "name":user["docs"][0]["name"],
-            "cbu":user["docs"][0]["cbu"],
+            "name":user.name,
+            "cbu":user.cbu,
             "balance":new_balance, 
-            "_rev":user["docs"][0]["_rev"]
+            "transfers":user.transfers,
+            "_rev":user.rev
             }
         print(body)
         url = 'http://admin:tpebdd2@localhost:5984/frances_users/{}'.format(
-            user["docs"][0]["_id"]
+            user.id
         )
         response = requests.put(url, json.dumps(body))
         json_response = json.loads(response.text)
@@ -73,19 +75,64 @@ class FrancesUserDao:
         
     def deposit_to_account(self, cbu:str, amount:int):
         user = self.get_user_by_cbu(cbu)
-        if "cbu" not in user["docs"][0]:
+        if user is None:
             return 404
-        current_balance = user["docs"][0]["balance"]
+        current_balance = user.balance
         new_balance = current_balance + amount
         body = {
-            "name":user["docs"][0]["name"],
-            "cbu":user["docs"][0]["cbu"],
+            "name":user.name,
+            "cbu":user.cbu,
             "balance":new_balance, 
-            "_rev":user["docs"][0]["_rev"]
+            "transfers":user.transfers,
+            "_rev":user.rev
             }
         print(body)
         url = 'http://admin:tpebdd2@localhost:5984/frances_users/{}'.format(
-            user["docs"][0]["_id"]
+            user.id
+        )
+        response = requests.put(url, json.dumps(body))
+        json_response = json.loads(response.text)
+        if "error" in json_response:
+            return -1
+        return 0
+    
+    def transfer_to_account(self, transfer_id:PydanticObjectId, src_cbu:str):
+        user = self.get_user_by_cbu(src_cbu)
+        if user is None or transfer_id is None:
+            return None
+        user.transfers.append(transfer_id)
+        body = {
+            "name":user.name,
+            "cbu":user.cbu,
+            "balance":user.balance, 
+            "transfers":user.transfers,
+            "_rev":user.rev
+            }
+        print(body)
+        url = 'http://admin:tpebdd2@localhost:5984/frances_users/{}'.format(
+            user.id
+        )
+        response = requests.put(url, json.dumps(body))
+        json_response = json.loads(response.text)
+        if "error" in json_response:
+            return -1
+        return 0
+
+    def receive_transfer(self, transfer_id:PydanticObjectId, dst_cbu:str,):
+        user = self.get_user_by_cbu(dst_cbu)
+        if user is None or transfer_id is None:
+            return None
+        user.transfers.append(transfer_id)
+        body = {
+            "name":user.name,
+            "cbu":user.cbu,
+            "balance":user.balance, 
+            "transfers":user.transfers,
+            "_rev":user.rev
+            }
+        print(body)
+        url = 'http://admin:tpebdd2@localhost:5984/frances_users/{}'.format(
+            user.id
         )
         response = requests.put(url, json.dumps(body))
         json_response = json.loads(response.text)

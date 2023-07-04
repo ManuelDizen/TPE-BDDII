@@ -101,41 +101,6 @@ class PixUserDao:
         params = (int(user_balance) + amount, bank_id, cbu)
         self.query(query, params)
         return 0
-    
-    """ def make_transaction(self, 
-                         src_cbu:str, 
-                         src_bank_code:str, 
-                         dst_cbu:str,
-                         dst_bank_code:str,
-        ):
-        dao = self.get_user_dao_for_bank_id(src_bank_code)
-        sender = dao.get_user_by_cbu(src_cbu)
-        if sender is None or sender.balance < amount:
-            return (-1, "Sender not found or not enough funds")
-        
-        rcv_dao = self.get_user_dao_for_bank_id(dst_bank_code)
-        receiver = dao.get_user_by_cbu(dst_cbu)
-        if receiver is None:
-            return (-1, "Receiver not found")
-        
-        t_dao = self.get_transfer_dao_for_bank_id(src_bank_code)
-        transfer_id = t_dao.create_transfer(src_cbu, dst_cbu, 
-                                         PixBanks.get_name_from_id(src_bank_code),
-                                         PixBanks.get_name_from_id(dst_bank_code),
-                                         amount)
-        dao.transfer_to_account(transfer_id, src_cbu)
-        dao.extract_from_account(src_cbu, amount)
-
-        t_dao = self.get_transfer_dao_for_bank_id(dst_bank_code)
-        transfer_id = t_dao.create_transfer(src_cbu, dst_cbu, 
-                                         PixBanks.get_name_from_id(src_bank_code),
-                                         PixBanks.get_name_from_id(dst_bank_code),
-                                         amount)
-        # Nota: Lo creo dos veces porque no puedo utilizar el mismo ID para ambas cosas
-        rcv_dao.receive_transfer(transfer_id, dst_cbu)
-        rcv_dao.deposit_to_account(dst_cbu, amount)
-
-        # CREO QUE ESTO DEBERÍA FUNCIONAR """
 
     def select_query(self, query, params=None):
         try:
