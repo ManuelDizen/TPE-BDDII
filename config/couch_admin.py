@@ -12,26 +12,21 @@ class CouchAdmin():
     def start_connection(self):
         server = couchdb2.Server(href=getenv("COUCH_URL"), username=getenv("COUCH_USER"), password=getenv("COUCH_PASSWORD"))
         self.server = server
-        if server.up() is True:
-            print("Server funca")
+        assert server.up() is True
 
         db_name = getenv("COUCH_DB_USERS_NAME")
         if db_name in server:
             db = server[db_name]
-            print("Base ya existe")
         else:
             db = server.create(db_name)
-            print("Creo base")
         
         self.user_db = db
 
         db_name = getenv("COUCH_DB_TRANSFERS_NAME")
         if db_name in server:
             db = server[db_name]
-            print("Base ya existe")
         else:
             db = server.create(db_name)
-            print("Creo base")
         
         self.transfer_db = db
         

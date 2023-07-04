@@ -20,12 +20,10 @@ class PostgresAdmin:
             self.cursor.execute(sql_file.read())
             self.connection.commit()
         self.pix_user_dao = PixUserDao(self.connection, self.cursor)
-        print("Postgres connection started.")
     
     def close_connection(self):
         self.cursor.close()
         self.connection.close()
-        print("Postgres connection ended")
         
     def get_pix_user_dao(self):
         return self.pix_user_dao

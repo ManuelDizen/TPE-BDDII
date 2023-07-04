@@ -14,8 +14,9 @@ app = FastAPI(title='TPE - BDDII - "Pixies"',
               description='Esta página documenta todos los endpoints desarrollados con FastAPI para interactuar con la aplicación')
 app.include_router(galicia_user_router.router)
 app.include_router(santander_user_router.router)
-app.include_router(pix_user_router.router)
 app.include_router(frances_user_router.router)
+app.include_router(pix_user_router.router)
+
 #
 # Incluir los routers
 #
