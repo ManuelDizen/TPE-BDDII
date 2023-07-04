@@ -3,7 +3,7 @@ from couchdb2 import Database
 from os import getenv
 import requests
 import json
-from models.frances_user import FrancesUserDTO
+from models.frances_user import FrancesUserDTO, FrancesUserDB
 # Codigo de banco 017
 
 class FrancesUserDao:
@@ -21,7 +21,10 @@ class FrancesUserDao:
         self.base_cbu_block += 1
         user = {"cbu":cbu, "name":name, "balance":0, "transfers":[]}
         self.db.put(user)
-        return 
+
+        # TODO: Cachear posible error (aunque no veo porque debería ocurrir)
+
+        return self.get_user_by_cbu(cbu)
     
     def get_user_by_cbu(self, cbu:str):
         query = {
@@ -36,9 +39,9 @@ class FrancesUserDao:
 
         json_response = json.loads(response.text)
         print(json_response)
-        #TODO: Devolver un tipo UserDB
 
-        return FrancesUserDTO.from_json(json_response["docs"][0])
+        #TODO: Cachear un error y devolver None
+        return FrancesUserDB.from_json(json_response["docs"][0])
     
     def extract_from_account(self, cbu:str, amount:int):
         user = self.get_user_by_cbu(cbu)

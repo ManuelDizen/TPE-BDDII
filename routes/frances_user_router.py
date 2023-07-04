@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from config import get_frances_user_dao
 from dao.frances_user_dao import FrancesUserDao
+from models.frances_user import FrancesUserDB, FrancesUserDTO
 
 router = APIRouter(prefix="/FRA",
                    tags=["Banco BBVA Francés"])
@@ -37,7 +38,7 @@ async def get_user_by_cbu(
     user = frances_user_dao.get_user_by_cbu(cbu)
     if user is None:
         raise HTTPException(404, "not found")
-    return user
+    return FrancesUserDTO.from_user(user)
 
 @router.patch(
     '/{cbu}/deposit',
