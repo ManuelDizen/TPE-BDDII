@@ -12,21 +12,21 @@ También se ofrece la posibilidad (aunque para hacer uso de la aplicación va a 
 ## Configuración
 El trabajo fue desarrollado con los siguientes stacks:
 * Para el desarrollo de la API:
-    * [Python3]()
-    * [FastAPI]()
-    * [Uvicorn]()
+    * [Python3](https://www.python.org/)
+    * [FastAPI](https://fastapi.tiangolo.com/)
+    * [Uvicorn](https://www.uvicorn.org/)
 * Como bases de datos:
-    * [PostgreSQL]() (Utilizada para el almacenamiento de las entidades de PIX)
-    * [MongoDB]() (Utilizada para el almacenamiento de las cuentas de banco de Galicia y Santander)
-    * [CouchDB]() (Utilizada para el almacenamiento de las cuentas de banco de BBVA Francés)
+    * [PostgreSQL](https://www.psycopg.org/) (Utilizada para el almacenamiento de las entidades de PIX)
+    * [MongoDB](https://www.mongodb.com/docs/drivers/pymongo/) (Utilizada para el almacenamiento de las cuentas de banco de Galicia y Santander)
+    * [CouchDB](https://github.com/pekrau/CouchDB2) (Utilizada para el almacenamiento de las cuentas de banco de BBVA Francés)
 
 A su vez, se utilizaron diversas dependencias de el entorno de python para administrar las bases de datos mediante APIs estándar desde el código (pymongo, couchdb2, etc.).
 
-Es importante mencionar que tanto PostgreSQL como CouchDB no ofrecen herramientas gratuitas de hosteo (no así Mongo con [Atlas]()), por lo que se trabajó con bases locales provistas mediante las imagenes oficiales de Docker. Es por ello que es necesario asegurarse del correcto funcionamiento del script "inicializador", dado que de eso depende que corran nuestros repositorios.
+Es importante mencionar que tanto PostgreSQL como CouchDB no ofrecen herramientas gratuitas de hosteo (no así Mongo con [Atlas](https://www.mongodb.com/atlas)), por lo que se trabajó con bases locales provistas mediante las imagenes oficiales de Docker. Es por ello que es necesario asegurarse del correcto funcionamiento del script "inicializador", dado que de eso depende que corran nuestros repositorios.
 
 Para esto, se realizó una serie de pasos detallada para correr este proyecto sin mayores inconvenientes:
 
-1. El trabajo fue ideado para correr en [Github Codespaces](), una herramienta gratuita provista por Github que otorga una maquina virtual UNIX expuesta a través del IDE Visual Studio Code. Por lo que se creo un script, `initialize.sh`, quién se encarga de instalar los requerimientos previos para correr el trabajo. Para correr esto, lo único que hay que hacer es:
+1. El trabajo fue ideado para correr en [Github Codespaces](https://github.com/features/codespaces), una herramienta gratuita provista por Github que otorga una maquina virtual UNIX expuesta a través del IDE Visual Studio Code. Por lo que se creo un script, `initialize.sh`, quién se encarga de instalar los requerimientos previos para correr el trabajo. Para correr esto, lo único que hay que hacer es:
 
 ``` ./initialize.sh ```
 
