@@ -1,6 +1,8 @@
 # TPE-BDDII
 ### Trabajo Práctico Especial para la materia "72.41 - Base de Datos II"
 
+## Introducción y consideraciones
+
 Este repositorio fue utilizado para el desarrollo del Trabajo Práctico Especial de la materia "72.41 - Base de Datos II". El TPE consistía en el desarrollo de la aplicación ["PIX"](https://en.wikipedia.org/wiki/Pix_(payment_system)), una aplicación de pagos digitales manejada por el Banco Central de Brasil. 
 
 La misma tiene un paralelismo claro con la plataforma de MercadoPago, de amplia adopción en Argentina. Pagos vía QR e instantaneos, diferentes modos de pago.
@@ -8,6 +10,17 @@ La misma tiene un paralelismo claro con la plataforma de MercadoPago, de amplia 
 [La consigna](https://voltaic-twist-d4c.notion.site/BD2-TP-Final-1Q2023-70f4f1d6776b4a7fa9d8235c7ce8c9c6) mencionaba que la implementación no debía ser _exactamente_ como lo es PIX, dado que por supuesto presentaría una complejidad gigante. Por lo que se desarrolló el _"esqueleto"_ de la misma. Esto quiere decir: La aplicación desarrollada permite registrarse en pix únicamente con la obligación de colocar un nombre y un CUIT (de modo de constatar que la persona registrandose es efectivamente quién dice ser, y a su vez para evitar registros dobles), registrar cuentas de banco proporcionando un CBU (asociandola a la cuenta PIX correspondiente), y realizar transacciones desde la API de PIX indicando CBU fuente y CBU destino (el detalle de la implementación y las limitaciones está detallado debajo).
 
 También se ofrece la posibilidad (aunque para hacer uso de la aplicación va a ser necesario) de utilizar APIs de bancos. Las mismas exponen la creación de usuarios, las busquedas de los mismos mediante CBU, y el depósito/extracción de dinero mediante endpoints. Una vez que se tienen estas cuentas, con un saldo determinado, se deben asociar a la cuenta de PIX desde la API de PIX, y allí se puede realizar una transacción.
+
+## Arquitectura
+
+La arquitectura del sistema (para el desarrollo final y futuro de la aplicación) es como se puede visualizar en la siguiente imagen:
+
+![Arq](./extras/readmepics/Arquitectura.jpg)
+
+Se modela el sistema de PIX con usuarios finales que interactuan con la API de la aplicación por medio de una aplicación movil (no desarrollada hasta el momento). Las conexiones se regulan mediante un Load Balancer (un simple nginx) con conexiones HTTPS a la API. 
+
+Si bien nosotros exponemos las APIs de los bancos "al público", esto es en pos de hacer el sistema usable dentro del scope académico del trabajo. Si esto fuera considerado para trabajar de manera funcional, las APIs de los bancos deberían ser de uso interno unicamente.
+
 
 ## Configuración
 El trabajo fue desarrollado con los siguientes stacks:
