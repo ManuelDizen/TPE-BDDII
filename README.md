@@ -21,6 +21,11 @@ Se modela el sistema de PIX con usuarios finales que interactuan con la API de l
 
 Si bien nosotros exponemos las APIs de los bancos "al público", esto es en pos de hacer el sistema usable dentro del scope académico del trabajo. Si esto fuera considerado para trabajar de manera funcional, las APIs de los bancos deberían ser de uso interno unicamente.
 
+Para trabajar con almacenamiento políglota, nosotros decidimos trabajar con 3 bases diferentes: PostgreSQL, MongoDB, y CouchDB. Lo primero a notar es la diferencia entre base relacional y de documentos. PostgreSQL se maneja de forma relacional, y a nuestro parecer, lo que se almacena dentro de la misma tiene un formato que permite suponer un volumen de datos manejable. Mientras que para los bancos, consideramos que usar bases NoSQL orientadas a documentos tenía mayor sentido, considerando que debemos pensar en la posibilidad de la escalabilidad del sistema. Los bancos tendrán que almacenar las n transacciones que se realicen entre cuentas. Además, una misma transacción impacta en la base de datos del banco emisor y del banco receptor, por lo que es necesario considerar todo esto.
+
+El uso de dos bases de datos NoSQL orientadas a documentos fue en función de realizar el trabajo mas desafiante. Si bien podríamos haber trabajado unicamente con MongoDB como almacenamiento para los 3 bancos, creímos que era interesante explorar el uso de la 2da opción estudiada para documentos, y se optó por el uso de la misma. 
+
+El desafio mas grande del uso de 3 bases diferentes es la interacción con las mismas, logicamente. Mongo tiene su propio lenguaje definido, que funciona para realizar operaciones sobre sus documentos. Couch, si bien ofrece una libreria oficial, se optó por el uso conjunto entre ella y los Requests HTTP a la base de forma directa. Estas dos formas fueron extremadamente diferentes de manejar, aunque ambas se trataran de una base or. a doc. .
 
 ## Configuración
 El trabajo fue desarrollado con los siguientes stacks:
