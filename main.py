@@ -4,9 +4,9 @@ import uvicorn
 import webbrowser
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from routes import galicia_user_router, pix_user_router, santander_user_router
+from routes import galicia_user_router, frances_user_router, pix_user_router, santander_user_router
 
-from config import mongo, postgres, couch
+from config import mongo, postgres, couch, save_updated_cbus
 
 load_dotenv()
 
@@ -14,6 +14,7 @@ app = FastAPI()
 app.include_router(galicia_user_router.router)
 app.include_router(santander_user_router.router)
 app.include_router(pix_user_router.router)
+app.include_router(frances_user_router.router)
 #
 # Incluir los routers
 #
@@ -28,6 +29,9 @@ def start_application():
 def close_connection():
     mongo.close_connection()
     postgres.close_connection()
+#    couch.close_connection()
+    save_updated_cbus()
+
 
 if __name__ == "__main__":
     port = getenv("API_PORT", 8000)

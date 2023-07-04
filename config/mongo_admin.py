@@ -32,10 +32,7 @@ class MongoAdmin:
 
     def close_connection(self):
         self.client.close()
-        with open('config/cbus.txt', 'w') as file:
-            file.write(str(self.galicia_user_dao.get_base_cbu()) + '\n')
-            file.write(str(self.santander_user_dao.get_base_cbu()) + '\n') #TODO: Cuando tenga el de santander agregar acá
-    
+  
     def get_db(self):
         return self.db
 
