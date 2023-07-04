@@ -25,7 +25,7 @@ class FrancesUserDao:
         # self.db.put(user)
         body = {
             "name":name,
-            "cbu":cbu,
+            "cbu":str(cbu),
             "balance":0, 
             "transfers":[],
             }
@@ -35,13 +35,12 @@ class FrancesUserDao:
         if "error" in json_response:
             print(json_response)
             return -1
-        
-        return self.get_user_by_cbu(cbu)
+        print(json_response)
+        return self.get_user_by_cbu(str(cbu))
         # TODO: Cachear posible error (aunque no veo porque debería ocurrir)
-
-        return self.get_user_by_cbu(cbu)
     
     def get_user_by_cbu(self, cbu:str):
+        print(cbu)
         query = {
             'selector': {
                 "cbu": cbu
@@ -54,6 +53,24 @@ class FrancesUserDao:
 
         json_response = json.loads(response.text)
         #TODO: Cachear un error y devolver None
+        return FrancesUserDB.from_json(json_response["docs"][0])
+
+    def get_user_by_name(self, name:str):
+        query = {
+            'selector': {
+                "name": name
+            },
+            'limit': 1
+        }
+        response = requests.post(
+            'http://admin:tpebdd2@localhost:5984/frances_users/_find', json=query
+        ) #TODO: Method that creates this url based on env variables
+
+        json_response = json.loads(response.text)
+        #TODO: Cachear un error y devolver None
+
+        print(json_response)
+
         return FrancesUserDB.from_json(json_response["docs"][0])
     
     def extract_from_account(self, cbu:str, amount:int):

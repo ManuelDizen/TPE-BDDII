@@ -15,38 +15,21 @@ router = APIRouter(prefix="/FRA",
 )
 async def create_user(
     name:str,
+    request:Request,
     frances_user_dao: FrancesUserDao = Depends(get_frances_user_dao)
 ):
     new = frances_user_dao.create_user(name)
-    print(new)
+    location = request.url_for("get_user_by_cbu", cbu=new.cbu)
+    location = str(location)
     return Response(
         status_code=201,
-        #TODO: location
+        headers={
+            "Location": location
+        },
     )
 
 @router.get(
-    '/testendpoint',
-    status_code=200,
-    responses={
-        404:{"description":"user doesn't exist"},
-        409:{"description":"Not enough funds"}}
-)
-async def test(
-    cbu:str,
-    transfer_id:str,
-    frances_user_dao: FrancesUserDao = Depends(get_frances_user_dao)
-):
-    print("Entro al endpoint que quiero")
-    user = frances_user_dao.get_user_by_cbu(cbu)
-    if user is not None:
-        print("El user lo encuentra")
-    frances_user_dao.transfer_to_account(transfer_id, cbu)
-
-
-    return Response(status_code=200)
-
-@router.get(
-    "/{cbu}",
+    "/cbu/{cbu}",
     status_code=200,
     responses={
         404: {"description":"not found"},
@@ -56,9 +39,23 @@ async def get_user_by_cbu(
     cbu:str, 
     frances_user_dao: FrancesUserDao = Depends(get_frances_user_dao)
 ):
-    print("Estoy entrando al endpoint del get")
-    print(cbu)
     user = frances_user_dao.get_user_by_cbu(cbu)
+    if user is None:
+        raise HTTPException(404, "not found")
+    return FrancesUserDTO.from_user(user)
+
+@router.get(
+    "/name/{name}",
+    status_code=200,
+    responses={
+        404: {"description":"not found"},
+    },
+)
+async def get_user_by_name(
+    name:str, 
+    frances_user_dao: FrancesUserDao = Depends(get_frances_user_dao)
+):
+    user = frances_user_dao.get_user_by_name(name)
     if user is None:
         raise HTTPException(404, "not found")
     return FrancesUserDTO.from_user(user)
