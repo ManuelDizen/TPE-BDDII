@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from routes import galicia_user_router, pix_user_router, santander_user_router
 
-from config import mongo, postgres
+from config import mongo, postgres, couch
 
 load_dotenv()
 
@@ -22,6 +22,7 @@ app.include_router(pix_user_router.router)
 def start_application():
     mongo.start_connection()
     postgres.start_connection()
+    couch.start_connection()
 
 @app.on_event("shutdown")
 def close_connection():
@@ -30,7 +31,7 @@ def close_connection():
 
 if __name__ == "__main__":
     port = getenv("API_PORT", 8000)
-    webbrowser.open_new_tab("https://manueldizen-opulent-capybara-9w5q5w96prw2p447-8000.preview.app.github.dev/docs")
+    # webbrowser.open_new_tab("https://manueldizen-opulent-capybara-9w5q5w96prw2p447-8000.preview.app.github.dev/docs")
     if not port or not isinstance(port, int):
         port = 8000
     uvicorn.run(app, host="0.0.0.0", port=port)
