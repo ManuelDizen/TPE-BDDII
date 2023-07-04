@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from config import get_galicia_transfer_dao, get_galicia_user_dao, get_pix_user_dao, get_santander_user_dao, get_santander_transfer_dao
+from config import get_galicia_transfer_dao, get_galicia_user_dao, get_pix_user_dao, get_santander_user_dao, get_santander_transfer_dao, get_frances_user_dao, get_frances_transfer_dao
 from dao.pix_user_dao import PixUserDao
 from models.pix_user import PixUserDTO
 
-router = APIRouter(prefix="/PIX",)
+router = APIRouter(prefix="/PIX",
+                   tags=["Pix"]
+                )
 
 @router.get(
     '/user',
@@ -132,7 +134,7 @@ def get_transfer_dao_for_bank_id(bank_id:int):
         return get_santander_transfer_dao()
         # return get_santander_user_dao()
     elif bank_id == 2:
-        return None
+        return get_frances_transfer_dao()
         # return get_frances_user_dao()
 
 def get_user_dao_for_bank_id(bank_id:int):
@@ -143,7 +145,7 @@ def get_user_dao_for_bank_id(bank_id:int):
         return get_santander_user_dao()
         # return get_santander_user_dao()
     elif bank_id == 2:
-        return None
+        return get_frances_user_dao()
         # return get_frances_user_dao()
 
 def get_name_from_id(id:int):
@@ -157,11 +159,11 @@ def get_name_from_id(id:int):
         return -1
     
 def get_id_from_name(name:str):
-        if name == "GAL":
-            return 0
-        elif name == "STD":
-            return 1
-        elif name == "FRA":
-            return 2
-        else:
-            return -1
+    if name == "GAL":
+        return 0
+    elif name == "STD":
+        return 1
+    elif name == "FRA":
+        return 2
+    else:
+        return -1

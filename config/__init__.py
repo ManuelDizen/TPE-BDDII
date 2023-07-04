@@ -24,6 +24,9 @@ def get_pix_user_dao():
 def get_frances_user_dao():
     return couch.get_frances_user_dao()
 
+def get_frances_transfer_dao():
+    return couch.get_frances_transfer_dao()
+
 def save_updated_cbus():
     with open('config/cbus.txt', 'w') as file:
         file.write(str(get_galicia_user_dao().get_base_cbu()) + '\n')

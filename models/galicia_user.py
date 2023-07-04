@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from fastapi import Request
 from models.pydantic_object_id import PydanticObjectId
 from typing import List
-from models.transfer import TransferDB
 
 class GaliciaUserDB(BaseModel):
     cbu:str

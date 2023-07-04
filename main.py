@@ -10,7 +10,8 @@ from config import mongo, postgres, couch, save_updated_cbus
 
 load_dotenv()
 
-app = FastAPI()
+app = FastAPI(title='TPE - BDDII - "Pixies"',
+              description='Esta página documenta todos los endpoints desarrollados con FastAPI para interactuar con la aplicación')
 app.include_router(galicia_user_router.router)
 app.include_router(santander_user_router.router)
 app.include_router(pix_user_router.router)

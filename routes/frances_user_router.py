@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from config import get_frances_user_dao
 from dao.frances_user_dao import FrancesUserDao
-router = APIRouter(prefix="/FRA",)
+
+router = APIRouter(prefix="/FRA",
+                   tags=["Banco BBVA Francés"])
 
 @router.post(
     "/account",
@@ -33,7 +35,7 @@ async def get_user_by_cbu(
     frances_user_dao: FrancesUserDao = Depends(get_frances_user_dao)
 ):
     user = frances_user_dao.get_user_by_cbu(cbu)
-    if "cbu" not in user["docs"][0]:
+    if user is None:
         raise HTTPException(404, "not found")
     return user
 

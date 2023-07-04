@@ -4,7 +4,8 @@ from config import get_galicia_user_dao, get_galicia_transfer_dao
 from dao.galicia_user_dao import GaliciaUserDao
 from dao.galicia_transfer_dao import GaliciaTransferDao
 
-router = APIRouter(prefix="/GAL",)
+router = APIRouter(prefix="/GAL",
+                   tags=["Banco Galicia"])
 
 @router.get(
     "/{cbu}",

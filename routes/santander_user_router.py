@@ -4,7 +4,8 @@ from config import get_santander_transfer_dao, get_santander_user_dao
 from dao.santander_user_dao import SantanderUserDao
 from dao.santander_transfer_dao import SantanderTransferDao
 
-router = APIRouter(prefix="/STD",)
+router = APIRouter(prefix="/STD",
+                   tags=["Banco Santander"])
 
 @router.get(
     "/{cbu}",

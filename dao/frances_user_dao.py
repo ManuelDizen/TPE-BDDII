@@ -3,7 +3,7 @@ from couchdb2 import Database
 from os import getenv
 import requests
 import json
-
+from models.frances_user import FrancesUserDTO
 # Codigo de banco 017
 
 class FrancesUserDao:
@@ -14,7 +14,6 @@ class FrancesUserDao:
     def __init__(self, db:Database, base_cbu_block:int):
         #self.db = db[getenv("COUCH_DB_USERS_NAME")]
         self.db = db
-        print(self.db)
         self.base_cbu_block = base_cbu_block
 
     def create_user(self, name:str):
@@ -30,14 +29,16 @@ class FrancesUserDao:
                 "cbu": cbu
             },
             'limit': 1
-}
+        }
         response = requests.post(
             'http://admin:tpebdd2@localhost:5984/frances_users/_find', json=query
         ) #TODO: Method that creates this url based on env variables
 
         json_response = json.loads(response.text)
-        #print(json_response)
-        return json_response
+        print(json_response)
+        #TODO: Devolver un tipo UserDB
+
+        return FrancesUserDTO.from_json(json_response["docs"][0])
     
     def extract_from_account(self, cbu:str, amount:int):
         user = self.get_user_by_cbu(cbu)
