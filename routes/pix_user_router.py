@@ -106,6 +106,7 @@ async def send_transfer(
                                         get_name_from_id(bank_id),
                                         get_name_from_id(rcv_bank_id),
                                         amount)
+    print(transfer)
     dao.transfer_to_account(transfer.id, src_cbu)
     dao.extract_from_account(src_cbu, amount)
 

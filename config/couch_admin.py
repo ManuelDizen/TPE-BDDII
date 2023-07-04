@@ -38,9 +38,10 @@ class CouchAdmin():
         with open('config/cbus.txt', 'r') as file:
             cbus = file.read().splitlines()
         cbu_frances = cbus[2]
+        transfers_frances = cbus[3]
 
         self.frances_user_dao = FrancesUserDao(self.user_db, int(cbu_frances))
-        self.frances_transfer_dao = FrancesTransferDao(self.transfer_db)
+        self.frances_transfer_dao = FrancesTransferDao(self.transfer_db, int(transfers_frances))
 
     def close_connection(self):
         self.server.close()

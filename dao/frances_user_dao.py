@@ -21,9 +21,22 @@ class FrancesUserDao:
     def create_user(self, name:str):
         cbu = "01700016" + str(self.base_cbu_block)
         self.base_cbu_block += 1
-        user = {"cbu":cbu, "name":name, "balance":0, "transfers":[]}
-        self.db.put(user)
-
+        # user = {"cbu":cbu, "name":name, "balance":0, "transfers":[]}
+        # self.db.put(user)
+        body = {
+            "name":name,
+            "cbu":cbu,
+            "balance":0, 
+            "transfers":[],
+            }
+        url = 'http://admin:tpebdd2@localhost:5984/frances_users/{}'.format(cbu)
+        response = requests.put(url, json.dumps(body))
+        json_response = json.loads(response.text)
+        if "error" in json_response:
+            print(json_response)
+            return -1
+        
+        return self.get_user_by_cbu(cbu)
         # TODO: Cachear posible error (aunque no veo porque debería ocurrir)
 
         return self.get_user_by_cbu(cbu)
@@ -40,8 +53,6 @@ class FrancesUserDao:
         ) #TODO: Method that creates this url based on env variables
 
         json_response = json.loads(response.text)
-        print(json_response)
-
         #TODO: Cachear un error y devolver None
         return FrancesUserDB.from_json(json_response["docs"][0])
     

@@ -32,3 +32,4 @@ def save_updated_cbus():
         file.write(str(get_galicia_user_dao().get_base_cbu()) + '\n')
         file.write(str(get_santander_user_dao().get_base_cbu()) + '\n')
         file.write(str(get_frances_user_dao().get_base_cbu()) + '\n')
+        file.write(str(get_frances_transfer_dao().get_base_transfer()) + '\n')
