@@ -168,5 +168,11 @@ class FrancesUserDao:
             return -1
         return 0
 
+    def get_balance_by_cbu(self, cbu:str):
+        user = self.get_user_by_cbu(cbu)
+        if user is None:
+            return -1
+        return user.balance
+
     def get_base_cbu(self):
         return self.base_cbu_block

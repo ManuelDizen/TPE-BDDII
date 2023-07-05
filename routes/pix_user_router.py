@@ -39,8 +39,13 @@ async def create_user(
     if check == -1:
         raise HTTPException(500, "Internal error, try again later")
     else:
+        location = request.url_for("get_user_by_cuit", cuit=new.cuit)
+        location = str(location)
         return Response(
-        status_code=201, #TODO: Location
+            status_code=201, #TODO: Location
+            headers={
+                "Location":location
+            }
     )
 
 @router.post(
@@ -122,8 +127,13 @@ async def send_transfer(
     pix_user_dao.extract_from_account(src_bank, src_cbu, amount)
     pix_user_dao.add_to_account(dst_bank, dst_cbu, amount)
 
+    location = request.url_for("get_transfer_by_id", id=transfer.id) #TODO: endpoint
+    location = str(location)
     return Response(
-        status_code=200, #TODO: Algo de info? Medio plain así ajja
+        status_code=201, #TODO: Location
+        headers={
+            "Location":location
+        }
     )
 
 
