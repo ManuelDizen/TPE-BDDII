@@ -21,11 +21,11 @@ Se modela el sistema de PIX con usuarios finales que interactuan con la API de l
 
 Si bien nosotros exponemos las APIs de los bancos "al público", esto es en pos de hacer el sistema usable dentro del scope académico del trabajo. Si esto fuera considerado para trabajar de manera funcional, las APIs de los bancos deberían ser de uso interno unicamente.
 
-Para trabajar con almacenamiento políglota, nosotros decidimos trabajar con 3 bases diferentes: PostgreSQL, MongoDB, y CouchDB. Lo primero a notar es la diferencia entre base relacional y de documentos. PostgreSQL se maneja de forma relacional, y a nuestro parecer, lo que se almacena dentro de la misma tiene un formato que permite suponer un volumen de datos manejable. Mientras que para los bancos, consideramos que usar bases NoSQL orientadas a documentos tenía mayor sentido, considerando que debemos pensar en la posibilidad de la escalabilidad del sistema. Los bancos tendrán que almacenar las n transacciones que se realicen entre cuentas. Además, una misma transacción impacta en la base de datos del banco emisor y del banco receptor, por lo que es necesario considerar todo esto.
+Para trabajar con almacenamiento políglota, nosotros decidimos trabajar con 3 bases diferentes: PostgreSQL, MongoDB, y CouchDB. Lo primero a notar es la diferencia entre la base relacional y las orientadas a documentos. PostgreSQL se maneja de forma relacional, y a nuestro parecer, lo que se almacena dentro de PIX tiene un formato que permite suponer un volumen de datos manejable. Mientras que para los bancos, consideramos que usar bases NoSQL orientadas a documentos tenía mayor sentido, considerando que debemos pensar en la posibilidad de la escalabilidad del sistema. Los bancos tendrán que almacenar las n transacciones que se realicen entre cuentas. Además, una misma transacción impacta en la base de datos del banco emisor y del banco receptor, por lo que es necesario considerar todo esto.
 
-El uso de dos bases de datos NoSQL orientadas a documentos fue en función de realizar el trabajo mas desafiante. Si bien podríamos haber trabajado unicamente con MongoDB como almacenamiento para los 3 bancos, creímos que era interesante explorar el uso de la 2da opción estudiada para documentos, y se optó por el uso de la misma. 
+El uso de dos bases de datos NoSQL orientadas a documentos fue en función de hacer el trabajo mas desafiante. Si bien podríamos haber trabajado unicamente con MongoDB como almacenamiento para los 3 bancos, creímos que era interesante explorar el uso de la 2da opción para documentos estudiada en la cursada.
 
-El desafio mas grande del uso de 3 bases diferentes es la interacción con las mismas, logicamente. Mongo tiene su propio lenguaje definido, que funciona para realizar operaciones sobre sus documentos. Couch, si bien ofrece una libreria oficial, se optó por el uso conjunto entre ella y los Requests HTTP a la base de forma directa. Estas dos formas fueron extremadamente diferentes de manejar, aunque ambas se trataran de una base or. a doc. .
+El desafio mas grande del uso de 3 bases diferentes es la interacción con las mismas, logicamente. Mongo tiene su propio lenguaje definido, que funciona para realizar operaciones sobre sus documentos. Couch, si bien ofrece una libreria oficial, se optó por el uso conjunto entre ella y los Requests HTTP a la base de forma directa. Estas dos formas fueron extremadamente diferentes de manejar, aunque ambas se trataran de bases orientadas a documentos.
 
 ## Configuración
 El trabajo fue desarrollado con los siguientes stacks:
@@ -46,7 +46,9 @@ Para esto, se realizó una serie de pasos detallada para correr este proyecto si
 
 1. El trabajo fue ideado para correr en [Github Codespaces](https://github.com/features/codespaces), una herramienta gratuita provista por Github que otorga una maquina virtual UNIX expuesta a través del IDE Visual Studio Code. Por lo que se creo un script, `initialize.sh`, quién se encarga de instalar los requerimientos previos para correr el trabajo. Para correr esto, lo único que hay que hacer es:
 
-``` ./initialize.sh ```
+``` 
+./initialize.sh 
+```
 
 - Nota: Es posible que el archivo no tenga permisos. Para esto, correr el comando: `chmod +x initialize.sh`
 
@@ -59,7 +61,9 @@ Para esto, se realizó una serie de pasos detallada para correr este proyecto si
 > Nota: Ante el enfoque académico para esta aplicación, y considerando que el hackeo de este sistema tendría un impacto nulo sobre las finanzas de los que lo vayan a testear, se provee el archivo .env de manera pública para facilitar el uso del sistema.
 
 4. Teniendo todo correctamente seteado, simplemente corremos el script `run.sh` de la misma forma de antes (aplica la misma aclaración que para el primer script):
-```./run.sh```
+```
+./run.sh
+```
 
 5. Esto debería inicializar el servidor donde se hostea nuestra API. Para acceder al mismo, hacer `CTRL + CLICK` sobre el enlace en negrita de la línea que dice `INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)`. Este enlace abrirá una página en negro, con un json crudo que expone la API en la raíz. 
 
@@ -75,7 +79,9 @@ Para esto, se realizó una serie de pasos detallada para correr este proyecto si
 ## Funcionamiento
 Dentro de Swagger, se encontrará que la API tiene secciones. Las mismas representan las APIs de las diferentes entidades. Los bancos disponibles para operar son Galicia, Santander, BBVA Francés.
 
-Es importante notar que varios endpoints requieren que se envíe un `src_bank` o un `bank_code`. Esta adaptación realizada fue para identificar internamente el esquema de bancos que tenemos. **Es de absoluta importancia que, a la hora de utilizar un banco fuente o destino, se utilice alguno de los siguientes códigos: GAL, STD, FRA. De no utilizarlos, el sistema no comprenderá de que banco se trata, y fallará a la hora de realizar una petición**
+Es importante notar que varios endpoints requieren que se envíe un `src_bank` o un `bank_code`. Esta adaptación realizada fue para identificar internamente el esquema de bancos que tenemos. 
+
+**Es de absoluta importancia que, a la hora de utilizar un banco fuente o destino, se utilice alguno de los siguientes códigos: GAL, STD, FRA. De no utilizarlos, el sistema no comprenderá de que banco se trata, y fallará a la hora de realizar una petición**
 
 > Repito la aclaración: **Usar unicamente los 3 códigos indicados (GAL, STD, FRA). El resto no funcionará**
 
@@ -86,4 +92,4 @@ Nombre | Legajo
 -------|--------
 [De Simone, Franco](https://github.com/desimonef) | 61100
 [Dizenhaus, Manuel](https://github.com/ManuelDizen) | 61101
-[De Los Ángeles Makk, Azul]() | Poner legajo
+[De Los Ángeles Makk, Azul]() | 61589
