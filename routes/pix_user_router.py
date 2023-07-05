@@ -25,10 +25,11 @@ async def get_user_by_cuit(
     '/user',
     status_code=201,
     responses={
-        500: {"description":"Internal error, try again later"},   
+        422: {"description":"User already exists"},   
     }
 )
 async def create_user(
+    request: Request,
     cuit: str, 
     name: str, 
     email: str = None,
@@ -37,15 +38,10 @@ async def create_user(
 ):
     check = pix_user_dao.create_pix_user(cuit, name, email, phone)
     if check == -1:
-        raise HTTPException(500, "Internal error, try again later")
+        raise HTTPException(422, "User already exists")
     else:
-        location = request.url_for("get_user_by_cuit", cuit=new.cuit)
-        location = str(location)
         return Response(
             status_code=201, #TODO: Location
-            headers={
-                "Location":location
-            }
     )
 
 @router.post(
