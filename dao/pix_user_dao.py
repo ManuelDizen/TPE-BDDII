@@ -24,7 +24,7 @@ class PixUserDao:
         query = "INSERT INTO users(cuit, name"
         params = (cuit, name)
         if mail is not None:
-            query += ", mail"
+            query += ", email"
         if phone is not None:
             query += ", phone"
         query += ") VALUES(%s, %s"

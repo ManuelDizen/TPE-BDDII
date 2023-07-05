@@ -8,7 +8,7 @@ router = APIRouter(prefix="/STD",
                    tags=["Banco Santander"])
 
 @router.get(
-    "/{cbu}",
+    "/cbu/{cbu}",
     response_model = SantanderUserDTO,
     responses={
         404: {"description": "User not found"},
@@ -21,6 +21,26 @@ async def get_user_by_cbu(
     santander_user_dao: SantanderUserDao = Depends(get_santander_user_dao),
 ):
     user = santander_user_dao.get_user_by_cbu(cbu)
+    
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return SantanderUserDTO.from_user(user=user, request=request)
+
+@router.get(
+    "/name/{name}",
+    response_model = SantanderUserDTO,
+    responses={
+        404: {"description": "User not found"},
+        403: {"description": "Forbidden operation"},
+    },
+)
+async def get_user_by_cbu(
+    name:str,
+    request:Request,
+    santander_user_dao: SantanderUserDao = Depends(get_santander_user_dao),
+):
+    user = santander_user_dao.get_user_by_name(name)
     
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -40,7 +60,7 @@ async def create_user(
     new = santander_user_dao.create_user(name)
     if new is None:
         raise HTTPException(status_code=409, detail="User already exists")
-    location = request.url_for("get_user_by_cbu", cbu=new.cbu)
+    location = request.url_for("santander_user_dao.get_user_by_cbu", cbu=new.cbu)
     location = str(location)
     return Response(
         status_code=201,
@@ -105,7 +125,7 @@ async def deposit_to_account(
         },
     )
 
-@router.post(
+""" @router.post(
     '/transfer',
     status_code=200,
     responses={
@@ -149,4 +169,20 @@ async def send_transfer_internal_std(
 
     return Response(
         status_code=200,
-    )
+    ) """
+
+@router.get(
+    "/balance/{cbu}",
+    status_code=200,
+    responses={
+        404: {"description":"not found"},
+    },
+)
+async def get_balance_by_cbu(
+    cbu:str, 
+    santander_user_dao: SantanderUserDao = Depends(get_santander_user_dao)
+):
+    user = santander_user_dao.get_user_by_cbu(cbu)
+    if user is None:
+        raise HTTPException(404, "not found")
+    return {"balance":user.balance, "cbu":cbu}

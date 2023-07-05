@@ -8,7 +8,7 @@ router = APIRouter(prefix="/GAL",
                    tags=["Banco Galicia"])
 
 @router.get(
-    "/{cbu}",
+    "/cbu/{cbu}",
     response_model = GaliciaUserDTO,
     responses={
         404: {"description": "User not found"},
@@ -21,6 +21,26 @@ async def get_user_by_cbu(
     galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao),
 ):
     user = galicia_user_dao.get_user_by_cbu(cbu)
+    
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return GaliciaUserDTO.from_user(user=user, request=request)
+
+@router.get(
+    "/name/{name}",
+    response_model = GaliciaUserDTO,
+    responses={
+        404: {"description": "User not found"},
+        403: {"description": "Forbidden operation"},
+    },
+)
+async def get_user_by_name(
+    name:str,
+    request:Request,
+    galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao),
+):
+    user = galicia_user_dao.get_user_by_name(name)
     
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -105,7 +125,7 @@ async def deposit_to_account(
         },
     )
 
-@router.post(
+""" @router.post(
     '/transfer',
     status_code=200,
     responses={
@@ -149,4 +169,20 @@ async def send_transfer_internal_gal(
 
     return Response(
         status_code=200,
-    )
+    ) """
+
+@router.get(
+    "/balance/{cbu}",
+    status_code=200,
+    responses={
+        404: {"description":"not found"},
+    },
+)
+async def get_balance_by_cbu(
+    cbu:str, 
+    galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao)
+):
+    user = galicia_user_dao.get_user_by_cbu(cbu)
+    if user is None:
+        raise HTTPException(404, "not found")
+    return {"balance":user.balance, "cbu":cbu}

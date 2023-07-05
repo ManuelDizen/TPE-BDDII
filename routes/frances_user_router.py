@@ -102,3 +102,19 @@ async def extract_from_account(
     return Response(
         status_code=200
     )
+
+@router.get(
+    "/balance/{cbu}",
+    status_code=200,
+    responses={
+        404: {"description":"not found"},
+    },
+)
+async def get_balance_by_cbu(
+    cbu:str, 
+    frances_user_dao: FrancesUserDao = Depends(get_frances_user_dao)
+):
+    user = frances_user_dao.get_user_by_cbu(cbu)
+    if user is None:
+        raise HTTPException(404, "not found")
+    return {"balance":user.balance, "cbu":cbu}
