@@ -76,6 +76,21 @@ Para esto, se realizó una serie de pasos detallada para correr este proyecto si
 
 7. Desde esta interfaz, se pueden probar todos los endpoints que ofrece la API de manera gráfica. Cabe destacar que la API fue desarrollada y testeada con esta interfaz, por lo que se recomienda que su uso sea mediante la misma (aunque se puede utilizar mediante HTTP sin ningún inconveniente, es simplemente una interfaz gráfica)
 
+Adicional: Uno podría visualizar la interfaz de ["Fauxton"](https://couchdb.apache.org/fauxton-visual-guide/#using-fauxton), ofrecido por couchdb para ver las bases de datos y documentos existentes. Para acceder desde workspace, hay que dirigirse a la _tab_ de _ports_, y hacer `CTRL + CLICK` en la columna de _Local Address_, de la entrada con el puerto **5984**, que es el que expone couch:
+![Imagen](./extras/readmepics/fauxton.png)
+
+Esto abrira la siguiente interfaz:
+
+![imagen](./extras/readmepics/loginpage.png)
+
+Para visualizar las DBs, es necesario colocar las credenciales de acceso. Para este trabajo, y dado que ya se encuentran expuestas las credenciales de los repositorios utilizados, se coloca _Username_:**admin**, _Password_:**tpebdd2**. Debería lanzar la siguiente interfaz:
+
+![imagen](./extras/readmepics/loggedinfauxton.png)
+
+Desde allí, se puede interactuar con la base, y hasta modificar los documentos de manera directa.
+
+Nota: Esta posibilidad no se ofrece con MongoDB dado que se encuentra en el servidor de Atlas, y para ello sería necesario exponer credenciales personales. Para PostgreSQL, se puede usar el CMDLINE, si así se lo desea. Pero al estar desarrollado en codespaces, es mas dificil conectar un IDE como DataGrip o DB Visualizer.
+
 ## Funcionamiento
 Dentro de Swagger, se encontrará que la API tiene secciones. Las mismas representan las APIs de las diferentes entidades. Los bancos disponibles para operar son Galicia, Santander, BBVA Francés.
 
