@@ -107,4 +107,4 @@ Nombre | Legajo
 -------|--------
 [De Simone, Franco](https://github.com/desimonef) | 61100
 [Dizenhaus, Manuel](https://github.com/ManuelDizen) | 61101
-[De Los Ángeles Makk, Azul]() | 61589
+[De Los Ángeles Makk, Azul](https://github.com/azulamakk) | 61589
