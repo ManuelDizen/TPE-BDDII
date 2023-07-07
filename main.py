@@ -19,7 +19,7 @@ app.include_router(santander_user_router.router)
 app.include_router(frances_user_router.router)
 app.include_router(pix_user_router.router)
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def landing_page():
     return """
     <!DOCTYPE html>
