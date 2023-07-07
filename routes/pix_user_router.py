@@ -123,13 +123,8 @@ async def send_transfer(
     pix_user_dao.extract_from_account(src_bank, src_cbu, amount)
     pix_user_dao.add_to_account(dst_bank, dst_cbu, amount)
 
-    location = request.url_for("get_transfer_by_id", id=transfer.id) #TODO: endpoint
-    location = str(location)
     return Response(
         status_code=201, #TODO: Location
-        headers={
-            "Location":location
-        }
     )
 
 
