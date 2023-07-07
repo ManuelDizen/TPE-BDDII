@@ -65,18 +65,20 @@ Para esto, se realizó una serie de pasos detallada para correr este proyecto si
 ./run.sh
 ```
 
-5. Esto debería inicializar el servidor donde se hostea nuestra API. Para acceder al mismo, hacer `CTRL + CLICK` sobre el enlace en negrita de la línea que dice `INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)`. Este enlace abrirá una página en negro, con un json crudo que expone la API en la raíz. 
+5. Esto debería inicializar el servidor donde se hostea nuestra API. Para acceder al mismo, hacer `CTRL + CLICK` sobre el enlace en negrita de la línea que dice `INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)`. Este enlace abrirá la siguiente página:
 
 ![Imagen 2](./extras/readmepics/run.png)
-![Imagen 3](./extras/readmepics/landingapi.png)
 
-6. Para acceder a la documentación de la API (y para poder utilizarla), lo que se debe hacer es colocarse sobre en enlace que figura en el navegador (que es la "traducción" que realiza codespaces de "localhost:8080"), y colocar el path `/docs` **al final** del enlace. Esto abrirá la documentación de la API en Swagger:
-![Imagen 4](./extras/readmepics/link.png)
+![Imagen 3](./extras/readmepics/LandingNueva.png)
+
+6. Para acceder a la documentación de la API (y para poder utilizarla), lo que se debe hacer es clickear el botón que dice _"Ver API"_. Esto abrirá la documentación de la API en Swagger:
+
 ![Imagen 5](./extras/readmepics/APISwagger.png)
 
 7. Desde esta interfaz, se pueden probar todos los endpoints que ofrece la API de manera gráfica. Cabe destacar que la API fue desarrollada y testeada con esta interfaz, por lo que se recomienda que su uso sea mediante la misma (aunque se puede utilizar mediante HTTP sin ningún inconveniente, es simplemente una interfaz gráfica)
 
 Adicional: Uno podría visualizar la interfaz de ["Fauxton"](https://couchdb.apache.org/fauxton-visual-guide/#using-fauxton), ofrecido por couchdb para ver las bases de datos y documentos existentes. Para acceder desde workspace, hay que dirigirse a la _tab_ de _ports_, y hacer `CTRL + CLICK` en la columna de _Local Address_, de la entrada con el puerto **5984**, que es el que expone couch:
+
 ![Imagen](./extras/readmepics/fauxton.png)
 
 Esto abrira la siguiente interfaz:
