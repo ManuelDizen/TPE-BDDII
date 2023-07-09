@@ -58,6 +58,14 @@ async def add_bank_account_to_user(
     bank_code:str,
     pix_user_dao: PixUserDao = Depends(get_pix_user_dao)
 ):
+    if bank_code not in ["GAL", "STD", "FRA"]:
+        raise HTTPException(404, "Bank not found")
+    dao = get_user_dao_for_bank_id(get_id_from_name(bank_code))
+    user = dao.get_user_by_cbu(cbu)
+    if user is None:
+        raise HTTPException(404, "User not found in bank")
+    if pix_user_dao.get_from_cuit(user_cuit) is None:
+        raise HTTPException(404, "User not found in pix")
     result = pix_user_dao.create_pix_bank_account(user_cuit, 
                                                   get_id_from_name(bank_code), 
                                                   cbu)
