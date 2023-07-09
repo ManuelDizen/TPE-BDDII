@@ -61,7 +61,7 @@ async def get_user_by_name(
 ):
     user = frances_user_dao.get_user_by_name(name)
     if user is None:
-        raise HTTPException(404, "not found")
+        raise HTTPException(404, "user not found")
     return FrancesUserDTO.from_user(user)
 
 @router.patch(
@@ -101,6 +101,8 @@ async def extract_from_account(
     check = frances_user_dao.extract_from_account(cbu, amount)
     if check == 400:
         raise HTTPException(400, "Not enough funds")
+    if check == 404:
+        raise HTTPException(404, "Account does not exist")
     if check == -1:
         raise HTTPException(400, "Error in extraction")
     return Response(
