@@ -53,11 +53,12 @@ async def get_user_by_name(
     responses={409: {"description": "User already exists"}},
 )
 async def create_user(
+    cuit:str,
     name:str,
     request: Request,
     galicia_user_dao: GaliciaUserDao = Depends(get_galicia_user_dao),
 ):
-    new = galicia_user_dao.create_user(name)
+    new = galicia_user_dao.create_user(cuit,name)
     if new is None:
         raise HTTPException(status_code=409, detail="User already exists")
     location = request.url_for("get_user_by_cbu", cbu=new.cbu)

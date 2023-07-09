@@ -18,17 +18,20 @@ class FrancesUserDao:
         self.db = db
         self.base_cbu_block = base_cbu_block
 
-    def create_user(self, name:str):
+    def create_user(self, cuit: str, name: str):
+        if self.get_user_by_cuit(cuit) is not None:
+            return None
+        
         cbu = "01700016" + str(self.base_cbu_block)
         self.base_cbu_block += 1
-        # user = {"cbu":cbu, "name":name, "balance":0, "transfers":[]}
-        # self.db.put(user)
+
         body = {
+            "cuit":cuit,
             "name":name,
             "cbu":str(cbu),
             "balance":0, 
             "transfers":[],
-            }
+        }
         url = 'http://admin:tpebdd2@localhost:5984/frances_users/{}'.format(cbu)
         response = requests.put(url, json.dumps(body))
         json_response = json.loads(response.text)
@@ -71,6 +74,23 @@ class FrancesUserDao:
 
         print(json_response)
 
+        return FrancesUserDB.from_json(json_response["docs"][0])
+    
+    def get_user_by_cuit(self, cuit:str):
+        query = {
+            'selector': {
+                "cuit": cuit
+            },
+            'limit': 1
+        }
+        response = requests.post(
+            'http://admin:tpebdd2@localhost:5984/frances_users/_find', json=query
+        ) #TODO: Method that creates this url based on env variables
+
+        json_response = json.loads(response.text)
+        if len(json_response["docs"]) == 0:
+            return None
+        
         return FrancesUserDB.from_json(json_response["docs"][0])
     
     def extract_from_account(self, cbu:str, amount:int):

@@ -8,17 +8,21 @@ router = APIRouter(prefix="/FRA",
 
 @router.post(
     "/account",
-    status_code=200, #TODO: Change for DTO, testing purposes
+    status_code=201, #TODO: Change for DTO, testing purposes
     responses={
+        409: {"description":"User already exists"},
         500:{"description":"internal server error"}
     },
 )
 async def create_user(
     name:str,
+    cuit:str,
     request:Request,
     frances_user_dao: FrancesUserDao = Depends(get_frances_user_dao)
 ):
-    new = frances_user_dao.create_user(name)
+    new = frances_user_dao.create_user(cuit, name)
+    if new is None:
+        raise HTTPException(409, "User already exists")
     location = request.url_for("get_user_by_cbu", cbu=new.cbu)
     location = str(location)
     return Response(

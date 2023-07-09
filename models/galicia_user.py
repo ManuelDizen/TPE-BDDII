@@ -6,11 +6,13 @@ from typing import List
 class GaliciaUserDB(BaseModel):
     cbu:str
     balance:int
+    cuit:str
     name:str
     transfers: List[PydanticObjectId]
 
 class GaliciaUserDTO(BaseModel):
     cbu:str
+    cuit:str
     name:str
     this:str
 
@@ -19,6 +21,7 @@ class GaliciaUserDTO(BaseModel):
         url = str(request.url_for("get_user_by_cbu", cbu=user.cbu))
         return cls(
             cbu=user.cbu, 
+            cuit=user.cuit,
             name=user.name,
             this=url,
         )

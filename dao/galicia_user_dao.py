@@ -27,9 +27,15 @@ class GaliciaUserDao:
         if user is None:
             return None
         return GaliciaUserDB(**user)
+    
+    def get_user_by_cuit(self, cuit:str):
+        user = self.galicia_users.find_one({"cuit":cuit})
+        if user is None:
+            return None
+        return GaliciaUserDB(**user)
 
-    def create_user(self, name:str):
-        if self.get_user_by_name(name) is not None:
+    def create_user(self, cuit:str, name:str):
+        if self.get_user_by_cuit(cuit) is not None:
             return None
         cbu = "00700016" + str(self.base_cbu_block)
         self.base_cbu_block += 1
@@ -37,6 +43,7 @@ class GaliciaUserDao:
             self.galicia_users.insert_one(
                 {
                     "cbu":cbu,
+                    "cuit":cuit,
                     "name":name,
                     "balance":0,
                     "transfers": [],

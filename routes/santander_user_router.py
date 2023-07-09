@@ -53,14 +53,15 @@ async def get_user_by_cbu(
     responses={409: {"description": "User already exists"}},
 )
 async def create_user(
+    cuit:str,
     name:str,
     request: Request,
     santander_user_dao: SantanderUserDao = Depends(get_santander_user_dao),
 ):
-    new = santander_user_dao.create_user(name)
+    new = santander_user_dao.create_user(cuit, name)
     if new is None:
         raise HTTPException(status_code=409, detail="User already exists")
-    location = request.url_for("santander_user_dao.get_user_by_cbu", cbu=new.cbu)
+    location = request.url_for("get_user_by_cbu", cbu=new.cbu)
     location = str(location)
     return Response(
         status_code=201,

@@ -19,7 +19,10 @@ async def get_user_by_cuit(
     pix_user_dao:PixUserDao = Depends(get_pix_user_dao)
 ):
     user = pix_user_dao.get_from_cuit(cuit)
-    return PixUserDTO(user[1], user[2], user[3], user[4])
+    if user == -1:
+        raise HTTPException(404, "User not found")
+    else:  
+        return PixUserDTO(user[1], user[2], user[3], user[4])
 
 @router.post(
     '/user',

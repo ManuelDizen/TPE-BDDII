@@ -27,16 +27,24 @@ class SantanderUserDao:
         if user is None:
             return None
         return SantanderUserDB(**user)
+    
+    def get_user_by_cuit(self, cuit:str):
+        user = self.santander_users.find_one({"cuit":cuit})
+        if user is None:
+            return None
+        return SantanderUserDB(**user)
 
-    def create_user(self, name:str):
-        if self.get_user_by_name(name) is not None:
+    def create_user(self, cuit:str, name:str):
+        if self.get_user_by_cuit(cuit) is not None:
             return None
         cbu = "07200016" + str(self.base_cbu_block)
         self.base_cbu_block += 1
+
         try:
             self.santander_users.insert_one(
                 {
                     "cbu":cbu,
+                    "cuit":cuit,
                     "name":name,
                     "balance":0,
                     "transfers": [],
@@ -44,6 +52,7 @@ class SantanderUserDao:
             )
         except DuplicateKeyError:
             return None
+        
         return self.get_user_by_cbu(cbu)
 
     def extract_from_account(self, cbu:str, amount:int):
