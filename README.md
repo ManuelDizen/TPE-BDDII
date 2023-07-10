@@ -58,7 +58,7 @@ Para esto, se realizó una serie de pasos detallada para correr este proyecto si
 
 3. Un paso extremadamente importante: El repositorio NO CUENTA con el archivo .env con el cual se desarrollo el proyecto. Esto es lógico dado que posee todas las credenciales a las bases de datos utilizadas, mas algunas variables que no deben ser publicadas. Es por eso que se incluyo el archivo `.env.fill_in`, que tiene los valores de los campos pero vacios. Deben ser llenados para correr, **de lo contrario el sistema no correrá**. 
 
-> Nota: Ante el enfoque académico para esta aplicación, y considerando que el hackeo de este sistema tendría un impacto nulo sobre las finanzas de los que lo vayan a testear, se provee el archivo .env de manera pública para facilitar el uso del sistema.
+> Nota: Considerando el enfoque académico de la aplicación, se provee el archivo .env de manera pública para facilitar el uso del sistema. Esto se realiza unicamente para la corrección del trabajo práctico, y se desalienta como práctica común.
 
 4. Teniendo todo correctamente seteado, simplemente corremos el script `run.sh` de la misma forma de antes (aplica la misma aclaración que para el primer script):
 ```shell
