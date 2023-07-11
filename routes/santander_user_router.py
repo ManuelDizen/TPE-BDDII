@@ -35,7 +35,7 @@ async def get_user_by_cbu(
         403: {"description": "Forbidden operation"},
     },
 )
-async def get_user_by_cbu(
+async def get_user_by_name(
     name:str,
     request:Request,
     santander_user_dao: SantanderUserDao = Depends(get_santander_user_dao),
