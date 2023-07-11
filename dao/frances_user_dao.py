@@ -56,6 +56,7 @@ class FrancesUserDao:
 
         json_response = json.loads(response.text)
         #TODO: Cachear un error y devolver None
+        print(json_response["docs"])
         return FrancesUserDB.from_json(json_response["docs"][0])
 
     def get_user_by_name(self, name:str):
@@ -105,6 +106,7 @@ class FrancesUserDao:
         new_balance = current_balance - amount
         body = {
             "name":user.name,
+            "cuit":user.cuit,
             "cbu":user.cbu,
             "balance":new_balance, 
             "transfers":user.transfers,
@@ -129,6 +131,7 @@ class FrancesUserDao:
         new_balance = current_balance + amount
         body = {
             "name":user.name,
+            "cuit":user.cuit,
             "cbu":user.cbu,
             "balance":new_balance, 
             "transfers":user.transfers,
@@ -151,6 +154,7 @@ class FrancesUserDao:
         user.transfers.append(transfer_id)
         body = {
             "name":user.name,
+            "cuit":user.cuit,
             "cbu":user.cbu,
             "balance":user.balance, 
             "transfers":user.transfers,
@@ -173,6 +177,7 @@ class FrancesUserDao:
         user.transfers.append(transfer_id)
         body = {
             "name":user.name,
+            "cuit":user.cuit,
             "cbu":user.cbu,
             "balance":user.balance, 
             "transfers":user.transfers,
