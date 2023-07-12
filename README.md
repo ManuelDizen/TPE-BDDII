@@ -3,13 +3,13 @@
 
 ## Introducción y consideraciones
 
-Este repositorio fue utilizado para el desarrollo del Trabajo Práctico Especial de la materia "72.41 - Base de Datos II". El TPE consistía en el desarrollo de la aplicación ["PIX"](https://en.wikipedia.org/wiki/Pix_(payment_system)), una aplicación de pagos digitales manejada por el Banco Central de Brasil. 
+Este repositorio fue utilizado para el desarrollo del Trabajo Práctico Especial de la materia "72.41 - Base de Datos II". El TPE consistía en el desarrollo de [una aplicación de pagos digitalnanejada por el Banco Central de Brasil](https://en.wikipedia.org/wiki/Pix_(payment_system)). 
 
 La misma tiene un paralelismo claro con la plataforma de MercadoPago, de amplia adopción en Argentina. Pagos vía QR e instantaneos, diferentes modos de pago.
 
-[La consigna](https://voltaic-twist-d4c.notion.site/BD2-TP-Final-1Q2023-70f4f1d6776b4a7fa9d8235c7ce8c9c6) mencionaba que la implementación no debía ser _exactamente_ como lo es PIX, dado que por supuesto presentaría una complejidad gigante. Por lo que se desarrolló el _"esqueleto"_ de la misma. Esto quiere decir: La aplicación desarrollada permite registrarse en PIX únicamente con la obligación de colocar un nombre y un CUIT (de modo de constatar que la persona registrandose es efectivamente quién dice ser, y a su vez para evitar registros dobles), registrar cuentas de banco proporcionando un CBU (asociandola a la cuenta PIX correspondiente), y realizar transacciones desde la API de PIX indicando CBU fuente y CBU destino (el detalle de la implementación y las limitaciones están detallados debajo).
+[La consigna](https://voltaic-twist-d4c.notion.site/BD2-TP-Final-1Q2023-70f4f1d6776b4a7fa9d8235c7ce8c9c6) mencionaba que la implementación no debía ser _exactamente_ como lo es la aplicación, dado que por supuesto presentaría una complejidad gigante. Por lo que se desarrolló el _"esqueleto"_ de la misma. Esto quiere decir: La aplicación desarrollada permite registrarse en la aplicación únicamente con la obligación de colocar un nombre y un CUIT (de modo de constatar que la persona registrandose es efectivamente quién dice ser, y a su vez para evitar registros dobles), registrar cuentas de banco proporcionando un CBU (asociandola a la cuenta la aplicación correspondiente), y realizar transacciones desde la API de la aplicación indicando CBU fuente y CBU destino (el detalle de la implementación y las limitaciones están detallados debajo).
 
-También se ofrece la posibilidad (aunque para hacer uso de la aplicación va a ser necesario) de utilizar APIs de bancos. Las mismas exponen la creación de usuarios, las busquedas de los mismos mediante CBU, y el depósito/extracción de dinero mediante endpoints. Una vez que se tienen estas cuentas, con un saldo determinado, se deben asociar a la cuenta de PIX desde la API de PIX, y allí se puede realizar una transacción.
+También se ofrece la posibilidad (aunque para hacer uso de la aplicación va a ser necesario) de utilizar APIs de bancos. Las mismas exponen la creación de usuarios, las busquedas de los mismos mediante CBU, y el depósito/extracción de dinero mediante endpoints. Una vez que se tienen estas cuentas, con un saldo determinado, se deben asociar a la cuenta de la aplicación desde la API de la aplicación, y allí se puede realizar una transacción.
 
 ## Arquitectura
 
@@ -17,11 +17,11 @@ La arquitectura del sistema (para el desarrollo final y futuro de la aplicación
 
 ![Arq](./extras/readmepics/Arquitectura.jpg)
 
-Se modela el sistema de PIX con usuarios finales que interactuan con la API de la aplicación por medio de una aplicación movil (no desarrollada hasta el momento). Las conexiones se regulan mediante un Load Balancer (un simple nginx) con conexiones HTTPS a la API. 
+Se modela el sistema de la aplicación con usuarios finales que interactuan con la API de la aplicación por medio de una aplicación movil (no desarrollada hasta el momento). Las conexiones se regulan mediante un Load Balancer (un simple nginx) con conexiones HTTPS a la API. 
 
 Si bien nosotros exponemos las APIs de los bancos "al público", esto es en pos de hacer el sistema usable dentro del scope académico del trabajo. Si esto fuera considerado para trabajar de manera funcional, las APIs de los bancos deberían ser de uso interno unicamente.
 
-Para trabajar con almacenamiento políglota, nosotros decidimos utilizar 3 bases diferentes: PostgreSQL, MongoDB, y CouchDB. Lo primero a notar es la diferencia entre la base relacional y las orientadas a documentos. PostgreSQL se maneja de forma relacional, y a nuestro parecer, lo que se almacena dentro de PIX tiene un formato que permite suponer un volumen de datos manejable. Mientras que para los bancos, consideramos que usar bases NoSQL orientadas a documentos tenía mayor sentido, considerando que debemos pensar en la posibilidad de la escalabilidad del sistema. A diferencia de PIX, los bancos tendrán que almacenar las n transacciones que se realicen entre cuentas. Además, una misma transacción impacta en la base de datos del banco emisor y del banco receptor, por lo que es necesario considerar todo esto.
+Para trabajar con almacenamiento políglota, nosotros decidimos utilizar 3 bases diferentes: PostgreSQL, MongoDB, y CouchDB. Lo primero a notar es la diferencia entre la base relacional y las orientadas a documentos. PostgreSQL se maneja de forma relacional, y a nuestro parecer, lo que se almacena dentro de la aplicación tiene un formato que permite suponer un volumen de datos manejable. Mientras que para los bancos, consideramos que usar bases NoSQL orientadas a documentos tenía mayor sentido, considerando que debemos pensar en la posibilidad de la escalabilidad del sistema. A diferencia de la aplicación, los bancos tendrán que almacenar las n transacciones que se realicen entre cuentas. Además, una misma transacción impacta en la base de datos del banco emisor y del banco receptor, por lo que es necesario considerar todo esto.
 
 El uso de dos bases de datos NoSQL orientadas a documentos se basó en que no todas las entidades bancarias modelan sus datos de la misma manera.
 
@@ -34,7 +34,7 @@ El trabajo fue desarrollado con los siguientes stacks:
     * [FastAPI](https://fastapi.tiangolo.com/)
     * [Uvicorn](https://www.uvicorn.org/)
 * Como bases de datos:
-    * [PostgreSQL](https://www.psycopg.org/) (Utilizada para el almacenamiento de las entidades de PIX)
+    * [PostgreSQL](https://www.psycopg.org/) (Utilizada para el almacenamiento de las entidades de la aplicación)
     * [MongoDB](https://www.mongodb.com/docs/drivers/pymongo/) (Utilizada para el almacenamiento de las cuentas de banco de Galicia y Santander)
     * [CouchDB](https://github.com/pekrau/CouchDB2) (Utilizada para el almacenamiento de las cuentas de banco de BBVA Francés)
 
