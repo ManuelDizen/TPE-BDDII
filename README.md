@@ -3,7 +3,7 @@
 
 ## Introducción y consideraciones
 
-Este repositorio fue utilizado para el desarrollo del Trabajo Práctico Especial de la materia "72.41 - Base de Datos II". El TPE consistía en el desarrollo de [una aplicación de pagos digitalnanejada por el Banco Central de Brasil](https://en.wikipedia.org/wiki/Pix_(payment_system)). 
+Este repositorio fue utilizado para el desarrollo del Trabajo Práctico Especial de la materia "72.41 - Base de Datos II". El TPE consistía en el desarrollo de [una aplicación de pagos digital manejada por el Banco Central de Brasil](https://en.wikipedia.org/wiki/Pix_(payment_system)). 
 
 La misma tiene un paralelismo claro con la plataforma de MercadoPago, de amplia adopción en Argentina. Pagos vía QR e instantaneos, diferentes modos de pago.
 
@@ -17,7 +17,7 @@ La arquitectura del sistema (para el desarrollo final y futuro de la aplicación
 
 ![Arq](./extras/readmepics/Arquitectura.jpg)
 
-Se modela el sistema de la aplicación con usuarios finales que interactuan con la API de la aplicación por medio de una aplicación movil (no desarrollada hasta el momento). Las conexiones se regulan mediante un Load Balancer (un simple nginx) con conexiones HTTPS a la API. 
+Se modela el sistema de la aplicación con usuarios finales que interactuan con la API de la aplicación por medio de una aplicación movil (no desarrollada hasta el momento). Las conexiones se manejarán mediante un Load Balancer (un simple nginx) con conexiones HTTPS a la API. 
 
 Si bien nosotros exponemos las APIs de los bancos "al público", esto es en pos de hacer el sistema usable dentro del scope académico del trabajo. Si esto fuera considerado para trabajar de manera funcional, las APIs de los bancos deberían ser de uso interno unicamente.
 
@@ -25,7 +25,7 @@ Para trabajar con almacenamiento políglota, nosotros decidimos utilizar 3 bases
 
 El uso de dos bases de datos NoSQL orientadas a documentos se basó en que no todas las entidades bancarias modelan sus datos de la misma manera.
 
-El desafio mas grande del uso de 3 bases diferentes es la interacción con las mismas, logicamente. MongoDB tiene su propio lenguaje definido, que funciona para realizar operaciones sobre sus documentos. Si bien CouchDB ofrece una libreria oficial, se optó por el uso conjunto entre ella y Requests HTTP a la base de forma directa. Estas dos formas fueron extremadamente diferentes de implementar, aunque ambas se tratan de bases orientadas a documentos.
+El desafio mas grande del uso de 3 bases diferentes es la interacción con las mismas, logicamente. MongoDB tiene su propio lenguaje definido, que funciona para realizar operaciones sobre sus documentos. Luego, si bien CouchDB ofrece una libreria oficial, se optó por el uso conjunto entre ella y Requests HTTP a la base de forma directa. Estas dos formas fueron extremadamente diferentes de implementar, aunque ambas se tratan de bases orientadas a documentos.
 
 ## Configuración
 El trabajo fue desarrollado con los siguientes stacks:
@@ -44,7 +44,7 @@ Es importante mencionar que tanto PostgreSQL como CouchDB no ofrecen herramienta
 
 Para esto, se realizó una serie de pasos detallada para correr este proyecto sin mayores inconvenientes:
 
-1. El trabajo fue ideado para correr en [Github Codespaces](https://github.com/features/codespaces), una herramienta gratuita provista por Github que otorga una maquina virtual UNIX expuesta a través del IDE Visual Studio Code. Por lo que se creo un script, `initialize.sh`, quién se encarga de instalar los requerimientos previos para correr el trabajo. Para correr esto, lo único que hay que hacer es:
+1. El trabajo fue ideado para correr en [Github Codespaces](https://github.com/features/codespaces), una herramienta provista por Github que otorga una maquina virtual UNIX expuesta a través del IDE Visual Studio Code. Por lo que se creo un script, `initialize.sh`, quién se encarga de instalar los requerimientos previos para correr el trabajo. Para correr esto, lo único que hay que hacer es:
 
 ```shell 
 ./initialize.sh 
